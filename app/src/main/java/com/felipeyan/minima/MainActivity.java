@@ -3,6 +3,7 @@ package com.felipeyan.minima;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addNote(View view) {
-        Toast.makeText(this, R.string.in_dev, Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, NoteActivity.class));
     }
 
     public void openSettings() {

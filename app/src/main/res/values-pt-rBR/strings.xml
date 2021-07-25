@@ -4,4 +4,5 @@
     <string name="menu_settings">Configurações</string>
     <string name="menu_about">Sobre</string>
     <string name="in_dev">Em desenvolvimento…</string>
+    <string name="start_typing">Comece a digitar sua nota aqui…</string>
 </resources>
