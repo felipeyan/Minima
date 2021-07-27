@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/noteLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,13 +8,14 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/notePreview"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="18dp"
+        android:layout_margin="18dp"
         android:text="@string/app_name"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:maxLines="4"
+        android:autoLink="web"
         android:ellipsize="end"/>
 
     <View

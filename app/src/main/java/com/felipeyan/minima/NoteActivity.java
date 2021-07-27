@@ -5,8 +5,12 @@ import androidx.appcompat.widget.AppCompatEditText;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
+
+import java.util.Objects;
 
 public class NoteActivity extends AppCompatActivity {
 
@@ -20,10 +24,16 @@ public class NoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_note);
 
         noteField = findViewById(R.id.noteField);
+        receivedData();
+    }
 
+    public void receivedData() {
         if (getIntent().hasExtra("selectedNote")) { // Check if received data when start the activity
             noteField.setText(getIntent().getStringExtra("selectedNote"));  // Sets the text received to the note field
-            noteField.setSelection(getIntent().getStringExtra("selectedNote").length()); // Sets the cursor to the last character of the note
+        } else if (Intent.ACTION_SEND.equals(getIntent().getAction()) && getIntent().getType() != null) { // Check if received data from another application
+            if (getIntent().getType().equals("text/plain")) { // Check if the received data is equal to a text
+                noteField.setText(getIntent().getStringExtra(Intent.EXTRA_TEXT)); // Sets the text received to the note field
+            }
         }
     }
 
