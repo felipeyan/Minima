@@ -5,4 +5,22 @@
     <string name="menu_about">Sobre</string>
     <string name="in_dev">Em desenvolvimento…</string>
     <string name="start_typing">Comece a digitar sua nota aqui…</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="empty_note">A nota não pode estar vazia</string>
+    <string name="duplicated_note">Nota duplicada com sucesso</string>
+    <string name="deleted_note">Nota apagada com sucesso</string>
+    <string name="saved_note">Nota salva com sucesso</string>
+    <string name="updated_note">Nota atualizada com sucesso</string>
+    <string name="save_changes">Salvar as alterações?</string>
+    <string name="database_deleted">Banco de dados apagado</string>
+    <string name="proceed">Essa ação não pode ser desfeita, você quer prosseguir?</string>
+    <string name="delete_entire_database">Apagar todo o banco de dados</string>
+    <string name="error_updating">Um erro ocorreu enquanto atualizava a nota…</string>
+    <string name="error_saving">Um erro ocorreu enquanto salvava a nota…</string>
+    <string name="error_deleting">Um erro ocorreu enquanto apagava a nota…</string>
+    <string name="error_duplicating">Um erro ocorreu enquanto duplicava a nota…</string>
+    <string name="menu_delete">Excluir</string>
+    <string name="menu_duplicate">Duplicar</string>
+    <string name="menu_share">Compartilhar</string>
 </resources>

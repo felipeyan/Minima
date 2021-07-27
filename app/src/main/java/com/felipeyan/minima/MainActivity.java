@@ -1,6 +1,7 @@
 package com.felipeyan.minima;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -10,8 +11,11 @@ import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
+    Database database = new Database(this);
     RecyclerView recyclerView;
 
     @Override
@@ -24,13 +28,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        recyclerView = findViewById(R.id.mainRV);
+        verifyPassword(); // Calls the function that checks the stored password
+        listNotes(); // Calls the RecyclerView creation function
     }
 
-    public void openMenu(View view) {
+    public void openMenu(View view) { // Displays the menu after clicking the 3-dot icon
         PopupMenu menu = new PopupMenu(this, view);
-        menu.getMenu().add(R.string.menu_settings);
-        menu.getMenu().add(R.string.menu_about);
+        menu.getMenu().add(R.string.menu_settings); // Settings screen option
+        menu.getMenu().add(R.string.menu_about); // About screen option
 
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -50,15 +55,40 @@ public class MainActivity extends AppCompatActivity {
         menu.show();
     }
 
-    public void addNote(View view) {
+    public void listNotes() { // Creates the RecyclerView that displays the notes saved in the database
+        ArrayList<String> noteIDS = database.getAllData(this, "id");
+        ArrayList<String> noteTEXTS = database.getAllData(this, "note");
+
+        recyclerView = findViewById(R.id.mainRV);
+        recyclerView.setAdapter(new NoteAdapter(this, noteIDS, noteTEXTS));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    public void addNote(View view) { // Launches the "Note" screen
         startActivity(new Intent(this, NoteActivity.class));
     }
 
-    public void openSettings() {
+    public void openSettings() { // Launches the "Settings" screen
         Toast.makeText(this, R.string.menu_settings, Toast.LENGTH_SHORT).show();
     }
 
-    public void openAbout() {
+    public void openAbout() { // Launches the "About" screen
         Toast.makeText(this, R.string.menu_about, Toast.LENGTH_SHORT).show();
+    }
+
+    public void verifyPassword() { // Check if you have a password for note encryption, if not, create and store a new one
+        if (getSharedPreferences("userPref", MODE_PRIVATE).getString("userPw", "").isEmpty()) {
+            try {
+                new Preferences(this).generateDefaultPass();
+            } catch (Exception e) {
+                Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();;
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy () {
+        super.onDestroy();
+        database.close();
     }
 }
