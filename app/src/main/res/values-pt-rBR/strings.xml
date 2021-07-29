@@ -15,7 +15,6 @@
     <string name="save_changes">Salvar as alterações?</string>
     <string name="database_deleted">Banco de dados apagado</string>
     <string name="proceed">Essa ação não pode ser desfeita, você quer prosseguir?</string>
-    <string name="delete_entire_database">Apagar todo o banco de dados</string>
     <string name="error_updating">Um erro ocorreu enquanto atualizava a nota…</string>
     <string name="error_saving">Um erro ocorreu enquanto salvava a nota…</string>
     <string name="error_deleting">Um erro ocorreu enquanto apagava a nota…</string>
@@ -23,4 +22,13 @@
     <string name="menu_delete">Excluir</string>
     <string name="menu_duplicate">Duplicar</string>
     <string name="menu_share">Compartilhar</string>
+    <string name="search_note">Pesquisar nota…</string>
+    <string-array name="settings">
+        <item>Configurar senha de PIN</item>
+        <item>Fazer backup de todas as notas</item>
+        <item>Mudar fonte do aplicativo</item>
+        <item>Exportar todas as notas em TXT</item>
+        <item>Exportar todas as notas em PDF</item>
+        <item>Apagar todo o banco de dados</item>
+    </string-array>
 </resources>

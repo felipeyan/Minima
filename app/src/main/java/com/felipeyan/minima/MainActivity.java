@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
     }
 
     @Override
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openSettings() { // Launches the "Settings" screen
-        Toast.makeText(this, R.string.menu_settings, Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 
     public void openAbout() { // Launches the "About" screen
