@@ -1,13 +1,18 @@
-package com.felipeyan.minima;
+ package com.felipeyan.minima;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SearchView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -16,21 +21,43 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     Database database = new Database(this);
+    ArrayList<String> noteIDS, noteTEXTS;
+    NoteAdapter noteAdapter;
     RecyclerView recyclerView;
+    SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
+        searchView = findViewById(R.id.mainSV);
+        recyclerView = findViewById(R.id.mainRV);
+
+        styleSearch(); // Stylize SearchView
         verifyPassword(); // Calls the function that checks the stored password
         listNotes(); // Calls the RecyclerView creation function
+
+        searchView.setOnCloseListener(this::toggleSearchView); // When the close search button is pressed
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                noteAdapter.getFilter().filter(query); // Search the note when the keyboard search icon is pressed
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                noteAdapter.getFilter().filter(newText); // Search the note when text is modified
+                return false;
+            }
+        });
     }
 
     public void openMenu(View view) { // Displays the menu after clicking the 3-dot icon
@@ -57,11 +84,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void listNotes() { // Creates the RecyclerView that displays the notes saved in the database
-        ArrayList<String> noteIDS = database.getAllData(this, "id");
-        ArrayList<String> noteTEXTS = database.getAllData(this, "note");
+        noteIDS = database.getAllData(this, "id");
+        noteTEXTS = database.getAllData(this, "note");
 
-        recyclerView = findViewById(R.id.mainRV);
-        recyclerView.setAdapter(new NoteAdapter(this, noteIDS, noteTEXTS));
+        noteAdapter = new NoteAdapter(this, noteIDS, noteTEXTS);
+        recyclerView.setAdapter(noteAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
@@ -85,6 +112,32 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();;
             }
         }
+    }
+
+    public boolean toggleSearchView() { // Hides the other Toolbar Views and displays the SearchView
+        findViewById(R.id.mainTitle).setVisibility(findViewById(R.id.mainTitle).getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE); // Toolbar title
+        findViewById(R.id.mainTools).setVisibility(findViewById(R.id.mainTools).getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE); // Toolbar buttons
+        findViewById(R.id.mainSV).setVisibility(findViewById(R.id.mainSV).getVisibility() == View.GONE ? View.VISIBLE : View.GONE); // Toolbar SearchView
+        searchView.setIconified(false); // Shows the search bar instead of the default icon
+
+        if (searchView.getVisibility() == View.GONE) { // If SearchView is hidden, also hide the keyboard
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+        }
+
+        return true;
+    }
+
+    public void styleSearch() {
+        SearchView.SearchAutoComplete svText = searchView.findViewById(androidx.appcompat.R.id.search_src_text); // SearchView text field
+        ImageView svClose = searchView.findViewById(androidx.appcompat.R.id.search_close_btn); // Close search button
+        svText.setHintTextColor(getResources().getColor(R.color.gray)); // SearchView hint color
+        svText.setTextColor(getResources().getColor(R.color.white)); // SearchView text color
+        svClose.setColorFilter(ContextCompat.getColor(this, R.color.gray), android.graphics.PorterDuff.Mode.SRC_IN); // SearchView close button color
+    }
+
+    public void showSearchView(View view) { // When the search icon is pressed
+        toggleSearchView(); // Show search layout
     }
 
     @Override

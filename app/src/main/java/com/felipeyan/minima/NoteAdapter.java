@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -16,19 +18,23 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
-public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
+public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> implements Filterable {
 
     Database database;
     Encryption encryption = new Encryption();
     Context context;
-    ArrayList<String> noteIDS, noteTEXTS;
+    ArrayList<String> noteIDS, noteTEXTS, noteTEXTSAll;
 
     public NoteAdapter(Context originContext, ArrayList<String> originIDS, ArrayList<String> originTEXTS) {
         database = new Database(originContext);
         context = originContext;
         noteIDS = originIDS;
         noteTEXTS = originTEXTS;
+        noteTEXTSAll = new ArrayList<>(originTEXTS);
     }
 
     @NonNull
@@ -75,7 +81,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return noteIDS.size(); // Creates the RecyclerView based on the length of the ID's list
+        return noteTEXTS.size(); // Creates the RecyclerView based on the length of the ID's list
     }
 
     // Menu when the note is long clicked
@@ -129,6 +135,40 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
         return note; // Returns the decrypted note as a String
     }
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            ArrayList<String> filteredNotes = new ArrayList<>();
+
+            if (constraint.toString().isEmpty()) {
+                filteredNotes.addAll(noteTEXTSAll);
+            } else {
+                for (String note: noteTEXTSAll) {
+                    if (decryptNote(note).toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        filteredNotes.add(note);
+                    }
+                }
+            }
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredNotes;
+
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            noteTEXTS.clear();
+            noteTEXTS.addAll((Collection<? extends String>) results.values);
+            notifyDataSetChanged();
+        }
+    };
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         AppCompatTextView note;
