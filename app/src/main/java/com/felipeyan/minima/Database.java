@@ -58,7 +58,7 @@ public class Database extends SQLiteOpenHelper {
         return db.delete(TABLE_NAME, "id = ?", new String[] { id });
     }
 
-    public ArrayList<String> getAllData(Context context, String column) {
+    public ArrayList<String> getAllData(Context context, String column, boolean reverse) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ArrayList<String> values = new ArrayList<>();
@@ -78,7 +78,7 @@ public class Database extends SQLiteOpenHelper {
             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
         }
 
-        Collections.reverse(values);
+        if (reverse) Collections.reverse(values); // If variable reverse equals true, reverse list order
 
         return values;
     }

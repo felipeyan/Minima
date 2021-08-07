@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void listNotes() { // Creates the RecyclerView that displays the notes saved in the database
-        noteIDS = database.getAllData(this, "id");
-        noteTEXTS = database.getAllData(this, "note");
+        noteIDS = database.getAllData(this, "id", true);
+        noteTEXTS = database.getAllData(this, "note", true);
 
         noteAdapter = new NoteAdapter(this, noteIDS, noteTEXTS);
         recyclerView.setAdapter(noteAdapter);

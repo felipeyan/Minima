@@ -31,4 +31,7 @@
         <item>Exportar todas as notas em PDF</item>
         <item>Apagar todo o banco de dados</item>
     </string-array>
+    <string name="storage_permission">A exportação de arquivos necessita da permissão de armazenamento, ative-a nas permissões desse aplicativo</string>
+    <string name="error_exporting_file">Um erro ocorreu ao exportar o arquivo</string>
+    <string name="exported_file">Arquivo exportado com sucesso</string>
 </resources>

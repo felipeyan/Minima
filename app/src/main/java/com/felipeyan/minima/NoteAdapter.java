@@ -49,7 +49,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     @Override
     public void onBindViewHolder(@NonNull NoteAdapter.ViewHolder holder, int position) {
         // Decrypts and stores the received note
-        String decryptedNote = decryptNote(noteTEXTS.get(position));
+        String decryptedNote = encryption.decryptNote(context, noteTEXTS.get(position));
 
         // Checks the length of the note and displays only part of it to save processing
         if (decryptedNote.length() < 150) {
@@ -113,7 +113,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
                 } else if (item.getTitle().toString().equals(context.getString(R.string.menu_share))) {
                     Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_SEND);
-                    intent.putExtra(Intent.EXTRA_TEXT, decryptNote(noteTEXTS.get(position))); // Decrypts and stores the selected note
+                    intent.putExtra(Intent.EXTRA_TEXT, encryption.decryptNote(context, noteTEXTS.get(position))); // Decrypts and stores the selected note
                     intent.setType("text/plain");
                     context.startActivity(Intent.createChooser(intent, null));
                     return true;
@@ -124,16 +124,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         });
 
         menu.show(); // Display the menu
-    }
-
-    public String decryptNote(String note) {
-        try { // Decrypts the note using the stored password
-            note = encryption.decrypt(note, new Preferences(context).getPassword());
-        } catch (Exception e) {
-            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
-        }
-
-        return note; // Returns the decrypted note as a String
     }
 
     @Override
@@ -150,7 +140,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
                 filteredNotes.addAll(noteTEXTSAll);
             } else {
                 for (String note: noteTEXTSAll) {
-                    if (decryptNote(note).toLowerCase().contains(constraint.toString().toLowerCase())) {
+                    if (encryption.decryptNote(context, note).toLowerCase().contains(constraint.toString().toLowerCase())) {
                         filteredNotes.add(note);
                     }
                 }

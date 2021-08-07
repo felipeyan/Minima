@@ -1,6 +1,8 @@
 package com.felipeyan.minima;
 
+import android.content.Context;
 import android.util.Base64;
+import android.widget.Toast;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -29,5 +31,15 @@ public class Encryption {
         byte[] bytes = password.getBytes(StandardCharsets.UTF_8);
         digest.update(bytes, 0, bytes.length);
         return new SecretKeySpec(digest.digest(), "AES");
+    }
+
+    protected String decryptNote(Context context, String note) {
+        try { // Decrypts the note using the stored password
+            note = decrypt(note, new Preferences(context).getPassword());
+        } catch (Exception e) {
+            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+        return note; // Returns the decrypted note as a String
     }
 }
