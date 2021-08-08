@@ -34,4 +34,11 @@
     <string name="storage_permission">A exportação de arquivos necessita da permissão de armazenamento, ative-a nas permissões desse aplicativo</string>
     <string name="error_exporting_file">Um erro ocorreu ao exportar o arquivo</string>
     <string name="exported_file">Arquivo exportado com sucesso</string>
+    <string name="insert_pin">Insira seu PIN</string>
+    <string name="cant_close_screen">Você não pode fechar esta tela</string>
+    <string name="cancel">Cancelar</string>
+    <string name="ok">OK</string>
+    <string name="empty_pin">O PIN não pode estar vazio</string>
+    <string name="short_pin">O PIN deve ter mais de 3 caracteres</string>
+    <string name="stored_pin">PIN salvo com sucesso</string>
 </resources>

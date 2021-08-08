@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Minima</string>
-    <string name="app_version" translatable="false">0.7.0</string>
+    <string name="app_version" translatable="false">0.8.0</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
     <string name="menu_delete">Delete</string>
@@ -26,6 +28,11 @@
     <string name="storage_permission">Exporting files requires storage permission, enable it in this application\'s permissions</string>
     <string name="exported_file">File exported successfully</string>
     <string name="error_exporting_file">An error occurred while exporting the file</string>
+    <string name="insert_pin">Insert your PIN</string>
+    <string name="empty_pin">PIN cannot be empty</string>
+    <string name="short_pin">PIN must be more than 3 characters</string>
+    <string name="stored_pin">PIN saved successfully</string>
+    <string name="cant_close_screen">You cannot close this screen</string>
     <string-array name="settings">
         <item>Set PIN password</item>
         <item>Backup all notes</item>

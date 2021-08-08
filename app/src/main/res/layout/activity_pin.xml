@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PinActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:text="@string/insert_pin"
+            android:textSize="21dp"
+            android:textColor="@color/white"
+            android:gravity="center_horizontal"/>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/pinInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="18dp"
+            android:layout_marginHorizontal="42dp"
+            android:paddingBottom="21dp"
+            android:textSize="28dp"
+            android:textColor="@color/white"
+            android:inputType="numberPassword"
+            android:gravity="center_horizontal"
+            android:backgroundTint="@color/white"
+            android:enabled="false"
+            tools:ignore="SpUsage"/>
+
+        <LinearLayout style="@style/pinContainer">
+            <androidx.appcompat.widget.AppCompatTextView android:text="7" style="@style/pinNumber"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="8" style="@style/pinNumber"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="9" style="@style/pinNumber"/>
+        </LinearLayout>
+        <LinearLayout style="@style/pinContainer">
+            <androidx.appcompat.widget.AppCompatTextView android:text="4" style="@style/pinNumber"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="5" style="@style/pinNumber"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="6" style="@style/pinNumber"/>
+        </LinearLayout>
+        <LinearLayout style="@style/pinContainer">
+            <androidx.appcompat.widget.AppCompatTextView android:text="1" style="@style/pinNumber"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="2" style="@style/pinNumber"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="3" style="@style/pinNumber"/>
+        </LinearLayout>
+        <LinearLayout style="@style/pinContainer">
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="0" style="@style/pinNumber"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_backspace"
+                android:tint="@color/white"
+                android:onClick="deleteNumber"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

@@ -30,6 +30,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // If a PIN password exists, go to PinActivity
+        if (!getSharedPreferences("userPref", MODE_PRIVATE).getString("userPIN", "").isEmpty()) {
+            startActivity(new Intent(this, PinActivity.class));
+        }
     }
 
     @Override

@@ -3,17 +3,23 @@ package com.felipeyan.minima;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -32,33 +38,46 @@ public class SettingsActivity extends AppCompatActivity {
                 R.layout.item_option, R.id.settingsTV, // List item layout
                 getResources().getStringArray(R.array.settings))); // List of options
 
-        // When an option item is pressed
-        settingsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 3: // Export all notes in TXT option
-                        if (export.checkStoragePermission()) {  // Checks if the application has permission to store files
-                            if (export.exportTXT()) { // If exported the file successfully, show a message
-                                Toast.makeText(SettingsActivity.this, R.string.exported_file, Toast.LENGTH_SHORT).show();
-                            } else { // Shows an error message
-                                Toast.makeText(SettingsActivity.this, R.string.error_exporting_file, Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            ActivityCompat.requestPermissions(SettingsActivity.this, new String[] {
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            }, 1); // Request storage access permission
+        settingsList.setOnItemClickListener(new settingsItemClick(this)); // When an option item is pressed
+    }
+
+    public class settingsItemClick implements AdapterView.OnItemClickListener {
+        Activity activity;
+        Export export;
+
+        public settingsItemClick(Activity activity) {
+            this.activity = activity;
+
+            export = new Export(activity);
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            switch (position) {
+                case 0: // Set PIN password option
+                    showPinDialog(); // Shows the PIN configuration dialog
+                    break;
+                case 3: // Export all notes in TXT option
+                    if (export.checkStoragePermission()) {  // Checks if the application has permission to store files
+                        if (export.exportTXT()) { // If exported the file successfully, show a message
+                            Toast.makeText(activity, R.string.exported_file, Toast.LENGTH_SHORT).show();
+                        } else { // Shows an error message
+                            Toast.makeText(activity, R.string.error_exporting_file, Toast.LENGTH_SHORT).show();
                         }
-                        break;
-                    case 5: // Delete database option
-                        deleteDatabase(); // Calls the dialog function to delete the database
-                        break;
-                    default:
-                        Toast.makeText(SettingsActivity.this, "Item pressed: " + position, Toast.LENGTH_SHORT).show();
-                        break;
-                }
+                    } else {
+                        ActivityCompat.requestPermissions(activity, new String[]{
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        }, 1); // Request storage access permission
+                    }
+                    break;
+                case 5: // Delete database option
+                    deleteDatabase(); // Calls the dialog function to delete the database
+                    break;
+                default:
+                    Toast.makeText(activity, "Item pressed: " + position, Toast.LENGTH_SHORT).show();
+                    break;
             }
-        });
+        }
     }
 
     public void deleteDatabase() {
@@ -101,6 +120,62 @@ public class SettingsActivity extends AppCompatActivity {
                     Toast.makeText(this, R.string.storage_permission, Toast.LENGTH_SHORT).show(); // Display the error message
                     break;
             }
+        }
+    }
+
+    public void showPinDialog() { // PIN configuration dialog
+        Dialog dialog = new Dialog(SettingsActivity.this);
+        dialog.setContentView(R.layout.item_pin); // Dialog layout
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT)); // Transparent background
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE); // Show keyboard when starting dialog
+        dialog.setCancelable(true); // When pressed outside the layout
+
+        AppCompatTextView pinOK = dialog.findViewById(R.id.settingsValidatePIN); // OK
+        AppCompatTextView pinCancel = dialog.findViewById(R.id.settingsCancelPIN); // Cancel
+        pinOK.setOnClickListener(new validatePIN(dialog)); // When OK is pressed
+        pinCancel.setOnClickListener(new dismissDialog(dialog)); // When cancel is pressed
+
+        dialog.show(); // Displays the dialog
+    }
+
+    public class validatePIN implements View.OnClickListener {
+        Dialog dialog;
+        AppCompatEditText pinInput;
+
+        public validatePIN(Dialog dialog) {
+            this.dialog = dialog;
+
+            pinInput = dialog.findViewById(R.id.settingsPIN);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (pinInput.getText().toString().isEmpty()) { // Displays an error message if the PIN is empty
+                Toast.makeText(SettingsActivity.this, R.string.empty_pin, Toast.LENGTH_SHORT).show();
+            } else if (pinInput.getText().toString().length() < 3) { // Displays an error message if the PIN is less than 3 characters
+                Toast.makeText(SettingsActivity.this, R.string.short_pin, Toast.LENGTH_SHORT).show();
+            } else { // if it's all right
+                try { // Encrypts and stores the entered PIN
+                    new Preferences(SettingsActivity.this).storePIN(pinInput.getText().toString());
+                    Toast.makeText(SettingsActivity.this, R.string.stored_pin, Toast.LENGTH_SHORT).show(); // Display a success message
+                    dialog.dismiss(); // Closes the dialog
+                } catch (Exception e) { // Display the error message
+                    Toast.makeText(SettingsActivity.this, e.toString(), Toast.LENGTH_SHORT).show();;
+                }
+            }
+        }
+    }
+
+    public static class dismissDialog implements View.OnClickListener {
+        Dialog dialog;
+
+        public dismissDialog(Dialog dialog) {
+            this.dialog = dialog; // Receive the dialog
+        }
+
+        @Override
+        public void onClick(View v) {
+            dialog.dismiss(); // Closes the dialog
         }
     }
 
