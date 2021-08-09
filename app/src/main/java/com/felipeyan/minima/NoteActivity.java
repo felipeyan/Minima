@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 public class NoteActivity extends AppCompatActivity {
-
     Encryption encryption = new Encryption();
     Database database = new Database(this);
     AppCompatEditText noteField;
@@ -22,6 +21,16 @@ public class NoteActivity extends AppCompatActivity {
 
         noteField = findViewById(R.id.noteField);
         receivedData();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Changes the Activity text font to the stored value
+        new Preferences(this).changeAppFont(this);
+        // Changes note field font
+        new Preferences(this).changeViewFont("EditText", noteField);
     }
 
     public void receivedData() {

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.util.Objects;
 
 public class PinActivity extends AppCompatActivity {
+    AppCompatTextView pinTitle;
     AppCompatEditText pinInput;
 
     @Override
@@ -21,8 +22,19 @@ public class PinActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin);
 
+        pinTitle = findViewById(R.id.pinTitle);
         pinInput = findViewById(R.id.pinInput);
         pinInput.addTextChangedListener(new pinText()); // When PIN input text is modified
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Changes the Activity text font to the stored value
+        new Preferences(this).changeAppFont(this);
+        // Changes toolbar title font
+        new Preferences(this).changeViewFont("TextView", pinTitle);
     }
 
     public void insertNumber(View view) { // Applied via the onClick property in pinNumber (values/themes.xml)

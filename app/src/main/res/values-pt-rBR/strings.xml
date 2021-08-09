@@ -41,4 +41,6 @@
     <string name="empty_pin">O PIN não pode estar vazio</string>
     <string name="short_pin">O PIN deve ter mais de 3 caracteres</string>
     <string name="stored_pin">PIN salvo com sucesso</string>
+    <string name="choose_font">Escolher fonte do app</string>
+    <string name="changed_font">Fonte do app alterada com sucesso</string>
 </resources>

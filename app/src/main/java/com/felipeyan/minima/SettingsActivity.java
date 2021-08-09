@@ -23,8 +23,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class SettingsActivity extends AppCompatActivity {
-
     Export export;
+    AppCompatTextView settingsTitle;
     ListView settingsList;
 
     @Override
@@ -33,12 +33,23 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         export = new Export(this);
+        settingsTitle = findViewById(R.id.settingsTitle);
         settingsList = findViewById(R.id.settingsLV);
         settingsList.setAdapter(new ArrayAdapter<>(this,
                 R.layout.item_option, R.id.settingsTV, // List item layout
                 getResources().getStringArray(R.array.settings))); // List of options
 
         settingsList.setOnItemClickListener(new settingsItemClick(this)); // When an option item is pressed
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Changes the Activity text font to the stored value
+        new Preferences(this).changeAppFont(this);
+        // Changes toolbar title font
+        new Preferences(this).changeViewFont("TextView", settingsTitle);
     }
 
     public class settingsItemClick implements AdapterView.OnItemClickListener {
@@ -56,6 +67,16 @@ public class SettingsActivity extends AppCompatActivity {
             switch (position) {
                 case 0: // Set PIN password option
                     showPinDialog(); // Shows the PIN configuration dialog
+                    break;
+                case 2:
+                    String[] fonts = getResources().getStringArray(R.array.fonts); // Stores the fonts list
+
+                    // Creates a single-select RadioGroup dialog
+                    // The second parameter in SingleChoiceItems selects the RadioButton corresponding to the font stored in SharedPreferences
+                    new AlertDialog.Builder(SettingsActivity.this, R.style.fontsDialog)
+                            .setTitle(R.string.choose_font)
+                            .setSingleChoiceItems(fonts, new Preferences(SettingsActivity.this).getFont(), new fontClick(SettingsActivity.this, fonts))
+                            .show();
                     break;
                 case 3: // Export all notes in TXT option
                     if (export.checkStoragePermission()) {  // Checks if the application has permission to store files
@@ -176,6 +197,27 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             dialog.dismiss(); // Closes the dialog
+        }
+    }
+
+    // When an item in the RadioGroup of fonts is selected
+    public static class fontClick implements DialogInterface.OnClickListener {
+        Context context;
+        String[] fonts;
+        String selectedFont;
+
+        public fontClick(Context context, String[] fonts) {
+            this.context = context;
+            this.fonts = fonts; // Stores the received fonts list
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            selectedFont = fonts[which]; // Stores the font name with the value corresponding to the selected index
+            new Preferences(context).storeFont(fonts[which]); // Stores the font name in SharedPreferences
+            Toast.makeText(context, R.string.changed_font, Toast.LENGTH_SHORT).show(); // Display a success message
+            dialog.dismiss(); // Closes the dialog
+            ((Activity) context).recreate(); // Rebuilds the view
         }
     }
 

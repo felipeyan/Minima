@@ -26,4 +26,40 @@
         <item name="android:onClick">insertNumber</item>
         <item name="android:gravity">center</item>
     </style>
+    <style name="fontsDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/gray</item>
+        <item name="colorPrimary">@color/black</item>
+    </style>
+    <style name="fontCrimsonText">
+        <item name="android:fontFamily">@font/crimson_text</item>
+        <item name="fontFamily">@font/crimson_text</item>
+    </style>
+    <style name="fontIndieFlower">
+        <item name="android:fontFamily">@font/indie_flower</item>
+        <item name="fontFamily">@font/indie_flower</item>
+    </style>
+    <style name="fontJosefinSans">
+        <item name="android:fontFamily">@font/josefin_sans</item>
+        <item name="fontFamily">@font/josefin_sans</item>
+    </style>
+    <style name="fontLato">
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="fontFamily">@font/lato</item>
+    </style>
+    <style name="fontNunito">
+        <item name="android:fontFamily">@font/nunito</item>
+        <item name="fontFamily">@font/nunito</item>
+    </style>
+    <style name="fontOpenSans">
+        <item name="android:fontFamily">@font/open_sans</item>
+        <item name="fontFamily">@font/open_sans</item>
+    </style>
+    <style name="fontRoboto">
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="fontFamily">@font/roboto</item>
+    </style>
+    <style name="fontUbuntu">
+        <item name="android:fontFamily">@font/ubuntu</item>
+        <item name="fontFamily">@font/ubuntu</item>
+    </style>
 </resources>

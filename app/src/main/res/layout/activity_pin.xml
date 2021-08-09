@@ -15,6 +15,7 @@
         android:gravity="center">
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/pinTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="18dp"
@@ -39,9 +40,9 @@
             tools:ignore="SpUsage"/>
 
         <LinearLayout style="@style/pinContainer">
-            <androidx.appcompat.widget.AppCompatTextView android:text="7" style="@style/pinNumber"/>
-            <androidx.appcompat.widget.AppCompatTextView android:text="8" style="@style/pinNumber"/>
-            <androidx.appcompat.widget.AppCompatTextView android:text="9" style="@style/pinNumber"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="1" style="@style/pinNumber"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="2" style="@style/pinNumber"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="3" style="@style/pinNumber"/>
         </LinearLayout>
         <LinearLayout style="@style/pinContainer">
             <androidx.appcompat.widget.AppCompatTextView android:text="4" style="@style/pinNumber"/>
@@ -49,9 +50,9 @@
             <androidx.appcompat.widget.AppCompatTextView android:text="6" style="@style/pinNumber"/>
         </LinearLayout>
         <LinearLayout style="@style/pinContainer">
-            <androidx.appcompat.widget.AppCompatTextView android:text="1" style="@style/pinNumber"/>
-            <androidx.appcompat.widget.AppCompatTextView android:text="2" style="@style/pinNumber"/>
-            <androidx.appcompat.widget.AppCompatTextView android:text="3" style="@style/pinNumber"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="7" style="@style/pinNumber"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="8" style="@style/pinNumber"/>
+            <androidx.appcompat.widget.AppCompatTextView android:text="9" style="@style/pinNumber"/>
         </LinearLayout>
         <LinearLayout style="@style/pinContainer">
             <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"/>

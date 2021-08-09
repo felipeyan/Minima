@@ -1,6 +1,7 @@
  package com.felipeyan.minima;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,9 +20,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
     Database database = new Database(this);
     ArrayList<String> noteIDS, noteTEXTS;
+    AppCompatTextView mainTitle;
     NoteAdapter noteAdapter;
     RecyclerView recyclerView;
     SearchView searchView;
@@ -43,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
 
         searchView = findViewById(R.id.mainSV);
         recyclerView = findViewById(R.id.mainRV);
+        mainTitle = findViewById(R.id.mainTitle);
+
+        // Changes the Activity text font to the stored value
+        new Preferences(this).changeAppFont(this);
+        // Changes toolbar title font
+        new Preferences(this).changeViewFont("TextView", mainTitle);
 
         styleSearch(); // Stylize SearchView
         verifyPassword(); // Calls the function that checks the stored password
