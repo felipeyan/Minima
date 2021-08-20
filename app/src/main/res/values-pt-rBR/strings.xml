@@ -25,10 +25,8 @@
     <string name="search_note">Pesquisar nota…</string>
     <string-array name="settings">
         <item>Configurar senha de PIN</item>
-        <item>Fazer backup de todas as notas</item>
         <item>Mudar fonte do aplicativo</item>
         <item>Exportar todas as notas em TXT</item>
-        <item>Exportar todas as notas em PDF</item>
         <item>Apagar todo o banco de dados</item>
     </string-array>
     <string name="storage_permission">A exportação de arquivos necessita da permissão de armazenamento, ative-a nas permissões desse aplicativo</string>

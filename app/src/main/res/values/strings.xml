@@ -37,10 +37,8 @@
     <string name="changed_font">App font changed successfully</string>
     <string-array name="settings">
         <item>Set PIN password</item>
-        <item>Backup all notes</item>
         <item>Change application font</item>
         <item>Export all notes in TXT</item>
-        <item>Export all notes in PDF</item>
         <item>Delete entire database</item>
     </string-array>
     <string-array name="fonts">

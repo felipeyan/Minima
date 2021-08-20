@@ -68,7 +68,7 @@ public class SettingsActivity extends AppCompatActivity {
                 case 0: // Set PIN password option
                     showPinDialog(); // Shows the PIN configuration dialog
                     break;
-                case 2:
+                case 1:
                     String[] fonts = getResources().getStringArray(R.array.fonts); // Stores the fonts list
 
                     // Creates a single-select RadioGroup dialog
@@ -78,7 +78,7 @@ public class SettingsActivity extends AppCompatActivity {
                             .setSingleChoiceItems(fonts, new Preferences(SettingsActivity.this).getFont(), new fontClick(SettingsActivity.this, fonts))
                             .show();
                     break;
-                case 3: // Export all notes in TXT option
+                case 2: // Export all notes in TXT option
                     if (export.checkStoragePermission()) {  // Checks if the application has permission to store files
                         if (export.exportTXT()) { // If exported the file successfully, show a message
                             Toast.makeText(activity, R.string.exported_file, Toast.LENGTH_SHORT).show();
@@ -91,7 +91,7 @@ public class SettingsActivity extends AppCompatActivity {
                         }, 1); // Request storage access permission
                     }
                     break;
-                case 5: // Delete database option
+                case 3: // Delete database option
                     deleteDatabase(); // Calls the dialog function to delete the database
                     break;
                 default:

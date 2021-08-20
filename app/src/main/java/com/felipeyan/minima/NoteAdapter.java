@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -162,7 +163,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         AppCompatTextView note;
-        LinearLayout layout;
+        CardView layout;
 
         public ViewHolder(@NonNull View view) {
             super(view);
