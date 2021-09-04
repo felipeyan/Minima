@@ -4,7 +4,7 @@
 If you do not have knowledge of Java or XML, we need people to translate the application into different languages. Below you can see a list of the languages ​​that the app has translation:
 
 * English (Default app language)
-* Brazilian Portuguese - Made by [Felipe Yan](github.com/felipeyan)
+* Brazilian Portuguese - Made by [Felipe Yan](https://github.com/felipeyan)
 
 #### Translation Tutorial in Android Studio ####
 1. First, open the project in Android Studio and access the path **app/res/values**  
