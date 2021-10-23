@@ -54,7 +54,7 @@ public class Export {
         StringBuilder notes = new StringBuilder();
         int notePos = 0;
 
-        for (String note: new Database(context).getAllData(context, "note", false)) {
+        for (String note: new Database(context).getAllData(context, "note", "ASC")) {
             notes.append("### Entry number ").append(notePos).append(" ###\n") // Separates the notes using the variable notePos as an index
                     .append(encryption.decryptNote(context, note)) // Add the decrypted note
                     .append("\n\n"); // Skip two lines

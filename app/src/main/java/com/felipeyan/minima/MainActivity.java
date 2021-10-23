@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     Database database = new Database(this);
-    ArrayList<String> noteIDS, noteTEXTS;
+    ArrayList<String> noteIDS, noteTEXTS, noteMOD;
     AppCompatTextView mainTitle;
     NoteAdapter noteAdapter;
     RecyclerView recyclerView;
@@ -96,10 +96,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void listNotes() { // Creates the RecyclerView that displays the notes saved in the database
-        noteIDS = database.getAllData(this, "id", true);
-        noteTEXTS = database.getAllData(this, "note", true);
+        noteIDS = database.getAllData(this, "id", "DESC"); // Collects all note IDS
+        noteTEXTS = database.getAllData(this, "note", "DESC"); // Collect all note texts
+        noteMOD = database.getAllData(this, "mod_date", "DESC"); // Collects all last modified dates
 
-        noteAdapter = new NoteAdapter(this, noteIDS, noteTEXTS);
+        noteAdapter = new NoteAdapter(this, noteIDS, noteTEXTS, noteMOD);
         recyclerView.setAdapter(noteAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 new Preferences(this).generateDefaultPass();
             } catch (Exception e) {
-                Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();;
+                Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
             }
         }
     }

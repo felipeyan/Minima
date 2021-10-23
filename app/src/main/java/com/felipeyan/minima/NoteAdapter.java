@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -19,23 +18,22 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> implements Filterable {
 
     Database database;
     Encryption encryption = new Encryption();
     Context context;
-    ArrayList<String> noteIDS, noteTEXTS, noteTEXTSAll;
+    ArrayList<String> noteIDS, noteTEXTS, noteMOD, noteTEXTSAll;
 
-    public NoteAdapter(Context originContext, ArrayList<String> originIDS, ArrayList<String> originTEXTS) {
+    public NoteAdapter(Context originContext, ArrayList<String> originIDS, ArrayList<String> originTEXTS, ArrayList<String> originMOD) {
         database = new Database(originContext);
         context = originContext;
-        noteIDS = originIDS;
-        noteTEXTS = originTEXTS;
-        noteTEXTSAll = new ArrayList<>(originTEXTS);
+        noteIDS = originIDS; // IDs received from main activity
+        noteTEXTS = originTEXTS; // Encrypted notes received from main activity
+        noteMOD = originMOD; // Modification dates received from main activity
+        noteTEXTSAll = new ArrayList<>(originTEXTS); // List of all notes (used in the search system)
     }
 
     @NonNull
@@ -50,7 +48,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     @Override
     public void onBindViewHolder(@NonNull NoteAdapter.ViewHolder holder, int position) {
         // Decrypts and stores the received note
-        String decryptedNote = encryption.decryptNote(context, noteTEXTS.get(position));
+        String decryptedNote = encryption.decryptNote(context, noteTEXTS.get(holder.getAdapterPosition()));
 
         // Checks the length of the note and displays only part of it to save processing
         if (decryptedNote.length() < 150) {
@@ -62,11 +60,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         // Starts the note activity with the values of the clicked note
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { // Transfers information from the clicked note to the note view activity
                 Intent intent = new Intent(context, NoteActivity.class);
-                intent.putExtra("selectedID", noteIDS.get(position));
+                intent.putExtra("selectedID", noteIDS.get(holder.getAdapterPosition()));
                 intent.putExtra("selectedNote", decryptedNote);
-                context.startActivity(intent);
+                intent.putExtra("selectedLastModification", noteMOD.get(holder.getAdapterPosition()));
+                context.startActivity(intent); // Starts note activity
             }
         });
 
@@ -74,7 +73,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                openMenu(v, position);
+                openMenu(v, holder.getAdapterPosition());
                 return true;
             }
         });
@@ -85,8 +84,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         return noteTEXTS.size(); // Creates the RecyclerView based on the length of the ID's list
     }
 
-    // Menu when the note is long clicked
-    public void openMenu(View view, int position) {
+    public void openMenu(View view, int position) { // Menu when the note is long clicked
         PopupMenu menu = new PopupMenu(context, view);
         menu.getMenu().add(R.string.menu_delete); // Delete note option
         menu.getMenu().add(R.string.menu_duplicate); // Duplicate note option
