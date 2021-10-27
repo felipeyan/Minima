@@ -27,13 +27,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     Context context;
     ArrayList<String> noteIDS, noteTEXTS, noteMOD, noteTEXTSAll;
 
-    public NoteAdapter(Context originContext, ArrayList<String> originIDS, ArrayList<String> originTEXTS, ArrayList<String> originMOD) {
-        database = new Database(originContext);
-        context = originContext;
-        noteIDS = originIDS; // IDs received from main activity
-        noteTEXTS = originTEXTS; // Encrypted notes received from main activity
-        noteMOD = originMOD; // Modification dates received from main activity
-        noteTEXTSAll = new ArrayList<>(originTEXTS); // List of all notes (used in the search system)
+    public NoteAdapter(Context context, ArrayList<String> noteIDS, ArrayList<String> noteTEXTS, ArrayList<String> noteMOD) {
+        this.database = new Database(context);
+        this.context = context;
+        this.noteIDS = noteIDS; // IDs received from main activity
+        this.noteTEXTS = noteTEXTS; // Encrypted notes received from main activity
+        this.noteMOD = noteMOD; // Modification dates received from main activity
+        this.noteTEXTSAll = new ArrayList<>(noteTEXTS); // List of all notes (used in the search system)
     }
 
     @NonNull
@@ -47,20 +47,16 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
 
     @Override
     public void onBindViewHolder(@NonNull NoteAdapter.ViewHolder holder, int position) {
-        // Decrypts and stores the received note
+        // Decrypt and store current received note
         String decryptedNote = encryption.decryptNote(context, noteTEXTS.get(holder.getAdapterPosition()));
 
-        // Checks the length of the note and displays only part of it to save processing
-        if (decryptedNote.length() < 150) {
-            holder.note.setText(decryptedNote);
-        } else {
-            holder.note.setText(decryptedNote.substring(0, 150));
-        }
+        // Checks the length of the current note and displays only part of it to save processing
+        reduceNoteDisplay(decryptedNote, holder);
 
         // Starts the note activity with the values of the clicked note
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { // Transfers information from the clicked note to the note view activity
+            public void onClick(View view) { // Transfers information from the clicked note to the note view activity
                 Intent intent = new Intent(context, NoteActivity.class);
                 intent.putExtra("selectedID", noteIDS.get(holder.getAdapterPosition()));
                 intent.putExtra("selectedNote", decryptedNote);
@@ -72,8 +68,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         // Shows the note menu when the note is long-clicked
         holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-                openMenu(v, holder.getAdapterPosition());
+            public boolean onLongClick(View view) {
+                openMenu(view, holder.getAdapterPosition());
                 return true;
             }
         });
@@ -89,39 +85,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         menu.getMenu().add(R.string.menu_delete); // Delete note option
         menu.getMenu().add(R.string.menu_duplicate); // Duplicate note option
         menu.getMenu().add(R.string.menu_share); // Share note option
-
-        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getTitle().toString().equals(context.getString(R.string.menu_delete))) {
-                    if (database.deleteData(noteIDS.get(position)) != 0) { // Check the number of deleted lines
-                        Toast.makeText(context, R.string.deleted_note, Toast.LENGTH_SHORT).show(); // Display a success message
-                        ((Activity) context).recreate(); // Refresh the main screen
-                    } else { // If no lines are affected
-                        Toast.makeText(context, R.string.error_deleting, Toast.LENGTH_SHORT).show(); // Display a error message
-                    }
-                    return true;
-                } else if (item.getTitle().toString().equals(context.getString(R.string.menu_duplicate))) {
-                    if (database.insertData(noteTEXTS.get(position))) { // Stores the encrypted value in the database
-                        Toast.makeText(context, R.string.duplicated_note, Toast.LENGTH_SHORT).show(); // Display a success message
-                        ((Activity) context).recreate(); // Refresh the main screen
-                    } else { // If unable to store in database
-                        Toast.makeText(context, R.string.error_duplicating, Toast.LENGTH_SHORT).show(); // Display a error message
-                    }
-                    return true;
-                } else if (item.getTitle().toString().equals(context.getString(R.string.menu_share))) {
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_SEND);
-                    intent.putExtra(Intent.EXTRA_TEXT, encryption.decryptNote(context, noteTEXTS.get(position))); // Decrypts and stores the selected note
-                    intent.setType("text/plain");
-                    context.startActivity(Intent.createChooser(intent, null));
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-
+        menu.setOnMenuItemClickListener(new noteMenu(context, position));
         menu.show(); // Display the menu
     }
 
@@ -158,6 +122,62 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
             notifyDataSetChanged();
         }
     };
+
+    public void reduceNoteDisplay(String decryptedNote, NoteAdapter.ViewHolder holder) {
+        if (decryptedNote.length() < 150) {
+            holder.note.setText(decryptedNote);
+        } else {
+            holder.note.setText(decryptedNote.substring(0, 150));
+        }
+    }
+    
+    public class noteMenu implements PopupMenu.OnMenuItemClickListener {
+        Context context;
+        int position;
+
+        public noteMenu(Context context, int position) {
+            this.context = context;
+            this.position = position;
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            String menuTitle = item.getTitle().toString();
+
+            String[] menuOptions = {
+                    context.getString(R.string.menu_delete),
+                    context.getString(R.string.menu_duplicate),
+                    context.getString(R.string.menu_share),
+            };
+
+            if (menuTitle.equals(menuOptions[0])) {
+                if (database.deleteData(noteIDS.get(position)) != 0) { // Check the number of deleted lines
+                    Toast.makeText(context, R.string.deleted_note, Toast.LENGTH_SHORT).show(); // Display a success message
+                    ((Activity) context).recreate(); // Refresh the main screen
+                } else { // If no lines are affected
+                    Toast.makeText(context, R.string.error_deleting, Toast.LENGTH_SHORT).show(); // Display a error message
+                }
+                return true;
+            } else if (menuTitle.equals(menuOptions[1])) {
+                if (database.insertData(noteTEXTS.get(position))) { // Stores the encrypted value in the database
+                    Toast.makeText(context, R.string.duplicated_note, Toast.LENGTH_SHORT).show(); // Display a success message
+                    ((Activity) context).recreate(); // Refresh the main screen
+                } else { // If unable to store in database
+                    Toast.makeText(context, R.string.error_duplicating, Toast.LENGTH_SHORT).show(); // Display a error message
+                }
+                return true;
+            } else if (menuTitle.equals(menuOptions[2])) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_TEXT, encryption.decryptNote(context, noteTEXTS.get(position))); // Decrypts and stores the selected note
+                intent.setType("text/plain");
+                context.startActivity(Intent.createChooser(intent, null));
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         AppCompatTextView note;

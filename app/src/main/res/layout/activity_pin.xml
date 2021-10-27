@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
+        android:layout_marginHorizontal="32dp"
         android:layout_centerVertical="true"
         android:orientation="vertical"
         android:gravity="center">
@@ -18,7 +18,6 @@
             android:id="@+id/pinTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
             android:text="@string/insert_pin"
             android:textSize="21dp"
             android:textColor="@color/white"
@@ -28,8 +27,8 @@
             android:id="@+id/pinInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
             android:layout_marginVertical="18dp"
-            android:layout_marginHorizontal="42dp"
             android:paddingBottom="21dp"
             android:textSize="28dp"
             android:textColor="@color/white"
@@ -39,34 +38,47 @@
             android:enabled="false"
             tools:ignore="SpUsage"/>
 
-        <LinearLayout style="@style/pinContainer">
-            <androidx.appcompat.widget.AppCompatTextView android:text="1" style="@style/pinNumber"/>
-            <androidx.appcompat.widget.AppCompatTextView android:text="2" style="@style/pinNumber"/>
-            <androidx.appcompat.widget.AppCompatTextView android:text="3" style="@style/pinNumber"/>
-        </LinearLayout>
-        <LinearLayout style="@style/pinContainer">
-            <androidx.appcompat.widget.AppCompatTextView android:text="4" style="@style/pinNumber"/>
-            <androidx.appcompat.widget.AppCompatTextView android:text="5" style="@style/pinNumber"/>
-            <androidx.appcompat.widget.AppCompatTextView android:text="6" style="@style/pinNumber"/>
-        </LinearLayout>
-        <LinearLayout style="@style/pinContainer">
-            <androidx.appcompat.widget.AppCompatTextView android:text="7" style="@style/pinNumber"/>
-            <androidx.appcompat.widget.AppCompatTextView android:text="8" style="@style/pinNumber"/>
-            <androidx.appcompat.widget.AppCompatTextView android:text="9" style="@style/pinNumber"/>
-        </LinearLayout>
-        <LinearLayout style="@style/pinContainer">
-            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"/>
-            <androidx.appcompat.widget.AppCompatTextView android:text="0" style="@style/pinNumber"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:orientation="vertical"
+            android:weightSum="4">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_backspace"
-                android:tint="@color/white"
-                android:onClick="deleteNumber"/>
-
+            <GridLayout style="@style/pinContainer">
+                <view class="com.felipeyan.minima.PinActivity$PinButton" android:text="1" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.PinActivity$PinButton" android:text="2" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.PinActivity$PinButton" android:text="3" style="@style/pinNumber"/>
+            </GridLayout>
+            <GridLayout style="@style/pinContainer">
+                <view class="com.felipeyan.minima.PinActivity$PinButton" android:text="4" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.PinActivity$PinButton" android:text="5" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.PinActivity$PinButton" android:text="6" style="@style/pinNumber"/>
+            </GridLayout>
+            <GridLayout style="@style/pinContainer">
+                <view class="com.felipeyan.minima.PinActivity$PinButton" android:text="7" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.PinActivity$PinButton" android:text="8" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.PinActivity$PinButton" android:text="9" style="@style/pinNumber"/>
+            </GridLayout>
+            <GridLayout style="@style/pinContainer">
+                <view class="com.felipeyan.minima.PinActivity$PinButton"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:background="@android:color/transparent"/>
+                <view class="com.felipeyan.minima.PinActivity$PinButton" android:text="0" style="@style/pinNumber"/>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="0dp"
+                    android:layout_height="28dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_backspace"
+                    android:tint="@color/white"
+                    android:onClick="deleteNumber"
+                    tools:ignore="UsingOnClickInXml"/>
+            </GridLayout>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
