@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -74,25 +75,30 @@ public class MainActivity extends AppCompatActivity {
 
     public void openMenu(View view) { // Displays the menu after clicking the 3-dot icon
         PopupMenu menu = new PopupMenu(this, view);
-        menu.getMenu().add(R.string.menu_settings); // Settings screen option
-        menu.getMenu().add(R.string.menu_about); // About screen option
-
-        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getTitle().toString().equals(getString(R.string.menu_settings))) {
-                    openSettings();
-                    return true;
-                } else if (item.getTitle().toString().equals(getString(R.string.menu_about))) {
-                    openAbout();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-
+        menu.getMenuInflater().inflate(R.menu.main_menu, menu.getMenu());
+        menu.setOnMenuItemClickListener(new menuClick(getApplicationContext()));
         menu.show();
+    }
+
+    public static class menuClick implements PopupMenu.OnMenuItemClickListener {
+        Context context;
+
+        public menuClick(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            if (item.getTitle().toString().equals(context.getString(R.string.menu_settings))) {
+                MainActivity.openSettings(context);
+                return true;
+            } else if (item.getTitle().toString().equals(context.getString(R.string.menu_about))) {
+                MainActivity.openAbout(context);
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     public void listNotes() { // Creates the RecyclerView that displays the notes saved in the database
@@ -109,12 +115,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, NoteActivity.class));
     }
 
-    public void openSettings() { // Launches the "Settings" screen
-        startActivity(new Intent(this, SettingsActivity.class));
+    public static void openSettings(Context context) { // Launches the "Settings" screen
+        context.startActivity(new Intent(context, SettingsActivity.class));
     }
 
-    public void openAbout() { // Launches the "About" screen
-        Toast.makeText(this, R.string.menu_about, Toast.LENGTH_SHORT).show();
+    public static void openAbout(Context context) { // Launches the "About" screen
+        Toast.makeText(context, R.string.menu_about, Toast.LENGTH_SHORT).show();
     }
 
     public void verifyPassword() { // Check if you have a password for note encryption, if not, create and store a new one

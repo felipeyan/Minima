@@ -82,9 +82,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
 
     public void openMenu(View view, int position) { // Menu when the note is long clicked
         PopupMenu menu = new PopupMenu(context, view);
-        menu.getMenu().add(R.string.menu_delete); // Delete note option
-        menu.getMenu().add(R.string.menu_duplicate); // Duplicate note option
-        menu.getMenu().add(R.string.menu_share); // Share note option
+        menu.getMenuInflater().inflate(R.menu.note_menu, menu.getMenu());
         menu.setOnMenuItemClickListener(new noteMenu(context, position));
         menu.show(); // Display the menu
     }
