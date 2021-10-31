@@ -1,6 +1,7 @@
  package com.felipeyan.minima;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,7 +24,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     Database database = new Database(this);
     ArrayList<String> noteIDS, noteTEXTS, noteMOD;
-    AppCompatTextView mainTitle;
+    AppCompatTextView mainTitle, orderText;
+    AppCompatImageView orderIcon;
     NoteAdapter noteAdapter;
     RecyclerView recyclerView;
     SearchView searchView;
@@ -46,15 +48,21 @@ public class MainActivity extends AppCompatActivity {
         searchView = findViewById(R.id.mainSV);
         recyclerView = findViewById(R.id.mainRV);
         mainTitle = findViewById(R.id.mainTitle);
+        orderText = findViewById(R.id.orderText);
+        orderIcon = findViewById(R.id.orderIcon);
 
         // Changes the Activity text font to the stored value
         new Preferences(this).changeAppFont(this);
         // Changes toolbar title font
         new Preferences(this).changeViewFont("TextView", mainTitle);
+        // Changes the listing order indication text
+        new Preferences(this).changeViewFont("TextView", orderText);
+        // Changes the listing order indication icon based on user preference
+        new Preferences(this).changeOrderIcon(orderIcon);
 
         styleSearch(); // Stylize SearchView
         verifyPassword(); // Calls the function that checks the stored password
-        listNotes(); // Calls the RecyclerView creation function
+        listNotes(getSharedPreferences("userPref", MODE_PRIVATE).getString("listOrder", "")); // Calls the RecyclerView creation function
 
         searchView.setOnCloseListener(this::toggleSearchView); // When the close search button is pressed
 
@@ -80,6 +88,24 @@ public class MainActivity extends AppCompatActivity {
         menu.show();
     }
 
+    public void changeOrder(View view) { // Action that changes the order of the note list
+        // Checks the value stored in preferences
+        switch (getSharedPreferences("userPref", MODE_PRIVATE).getString("listOrder", "")) {
+            case "DESC": default: // If the value is DESC (system default)
+                new Preferences(this).storeOrder("ASC"); // Stores the new value (ASC)
+                Toast.makeText(this, R.string.list_order_asc, Toast.LENGTH_SHORT).show(); // Display the modification message
+                listNotes("ASC"); // Recreates RecyclerView with the new display order (ascending)
+                break;
+            case "ASC": // If the value is ASC
+                new Preferences(this).storeOrder("DESC"); // Stores the new value (DESC)
+                Toast.makeText(this, R.string.list_order_desc, Toast.LENGTH_SHORT).show(); // Display the modification message
+                listNotes("DESC"); // Recreates RecyclerView with the new display order (descending)
+                break;
+        }
+
+        new Preferences(this).changeOrderIcon(orderIcon); // Displays the icon corresponding to the option
+    }
+
     public static class menuClick implements PopupMenu.OnMenuItemClickListener {
         Context context;
 
@@ -101,10 +127,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void listNotes() { // Creates the RecyclerView that displays the notes saved in the database
-        noteIDS = database.getAllData(this, "id", "DESC"); // Collects all note IDS
-        noteTEXTS = database.getAllData(this, "note", "DESC"); // Collect all note texts
-        noteMOD = database.getAllData(this, "mod_date", "DESC"); // Collects all last modified dates
+    public void listNotes(String order) { // Creates the RecyclerView that displays the notes saved in the database
+        // The string "order" indicates the order of values to the database (ASC = ascending, DESC = descending)
+        noteIDS = database.getAllData(this, "id", order); // Collects all note IDS
+        noteTEXTS = database.getAllData(this, "note", order); // Collect all note texts
+        noteMOD = database.getAllData(this, "mod_date", order); // Collects all last modified dates
 
         noteAdapter = new NoteAdapter(this, noteIDS, noteTEXTS, noteMOD);
         recyclerView.setAdapter(noteAdapter);

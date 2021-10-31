@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.view.View;
 
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.res.ResourcesCompat;
 
@@ -64,6 +65,12 @@ public class Preferences {
         return fontPos;
     }
 
+    protected void storeOrder(String order) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("listOrder", order);
+        editor.apply();
+    }
+
     public void changeAppFont(Context context) { // Modifies the style of the fontFamily property in the app theme
         String font = preferences.getString("userFont", ""); // Receives the font stored in SharedPreferences
 
@@ -113,6 +120,19 @@ public class Preferences {
             case "EditText": // AppCompatEditText
                 AppCompatEditText editText = (AppCompatEditText) view; // Stores the View in the correct element
                 editText.setTypeface(ResourcesCompat.getFont(context, fontID)); // Modifies View font
+                break;
+        }
+    }
+
+    public void changeOrderIcon(View view) {
+        AppCompatImageView orderIcon = (AppCompatImageView) view;
+
+        switch (preferences.getString("listOrder", "")) {
+            case "DESC": default:
+                orderIcon.setImageResource(R.drawable.ic_down);
+                break;
+            case "ASC":
+                orderIcon.setImageResource(R.drawable.ic_up);
                 break;
         }
     }

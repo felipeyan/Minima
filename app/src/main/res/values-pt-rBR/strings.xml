@@ -41,4 +41,7 @@
     <string name="stored_pin">PIN salvo com sucesso</string>
     <string name="choose_font">Escolher fonte do app</string>
     <string name="changed_font">Fonte do app alterada com sucesso</string>
+    <string name="list_order">Última modificação</string>
+    <string name="list_order_asc">Ordem de lista crescente</string>
+    <string name="list_order_desc">Ordem de lista decrescente</string>
 </resources>

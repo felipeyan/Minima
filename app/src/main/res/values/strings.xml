@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Minima</string>
-    <string name="app_version" translatable="false">0.9.2</string>
+    <string name="app_version" translatable="false">0.9.3</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
@@ -35,6 +35,9 @@
     <string name="cant_close_screen">You cannot close this screen</string>
     <string name="choose_font">Choose app font</string>
     <string name="changed_font">App font changed successfully</string>
+    <string name="list_order">Last modification</string>
+    <string name="list_order_asc">Ascending list order</string>
+    <string name="list_order_desc">Descending list order</string>
     <string-array name="settings">
         <item>Set PIN password</item>
         <item>Change application font</item>
@@ -51,13 +54,4 @@
         <item>Roboto</item>
         <item>Ubuntu</item>
     </string-array>
-    <string name="title_activity_new">New</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>
