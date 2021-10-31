@@ -19,8 +19,8 @@ public class Preferences {
     Context context;
     SharedPreferences preferences;
 
-    public Preferences(Context originContext) {
-        context = originContext;
+    public Preferences(Context context) {
+        this.context = context;
         preferences = context.getSharedPreferences("userPref", MODE_PRIVATE);
     }
 
@@ -65,62 +65,43 @@ public class Preferences {
         return fontPos;
     }
 
+    protected int getFontResource() {
+        String font = preferences.getString("userFont", ""); // Receives the font stored in SharedPreferences
+
+        if (font.isEmpty()) font = "Lato"; // If there is no value stored choose "Lato" as the default font
+
+        return context.getResources().getIdentifier(font.toLowerCase().replaceAll(" ", "_"), "font", context.getPackageName());
+    }
+
     protected void storeOrder(String order) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("listOrder", order);
         editor.apply();
     }
 
-    public void changeAppFont(Context context) { // Modifies the style of the fontFamily property in the app theme
-        String font = preferences.getString("userFont", ""); // Receives the font stored in SharedPreferences
+    public void changeAppFont() {
+        String storedFont = preferences.getString("userFont", ""); // Stored font
+        String fontResource = "fontLato"; // Default app font
 
-        switch (font) { // Applies the style corresponding to the stored font name
-            case "Crimson Text":
-                context.getTheme().applyStyle(R.style.fontCrimsonText, true);
-                break;
-            case "Indie Flower":
-                context.getTheme().applyStyle(R.style.fontIndieFlower, true);
-                break;
-            case "Josefin Sans":
-                context.getTheme().applyStyle(R.style.fontJosefinSans, true);
-                break;
-            case "Lato": default: // Default font style
-                context.getTheme().applyStyle(R.style.fontLato, true);
-                break;
-            case "Nunito":
-                context.getTheme().applyStyle(R.style.fontNunito, true);
-                break;
-            case "Open Sans":
-                context.getTheme().applyStyle(R.style.fontOpenSans, true);
-                break;
-            case "Roboto":
-                context.getTheme().applyStyle(R.style.fontRoboto, true);
-                break;
-            case "Ubuntu":
-                context.getTheme().applyStyle(R.style.fontUbuntu, true);
-                break;
-        }
+        // If the stored font is not empty, concatenate "font" with the name of the stored font
+        if (!storedFont.isEmpty()) fontResource = "font" + storedFont.replaceAll(" ", "");
+
+        // Apply font style by collecting R.style resource
+        context.getTheme().applyStyle(context.getResources().getIdentifier(fontResource, "style", context.getPackageName()), true);
     }
 
-    public void changeViewFont(String type, View view) { // Modify the font of a specific view
-        String font = preferences.getString("userFont", ""); // Receives the font stored in SharedPreferences
-
-        if (font.isEmpty()) { // If there is no value stored
-            font = "Lato"; // Choose Lato as the default font
-        }
-
-        // Gets the resource in R.font corresponding to the stored font (lowercase and no spaces)
-        int fontID = context.getResources().getIdentifier(font.toLowerCase().replaceAll(" ", "_"), "font", context.getPackageName());
-
-        switch (type) { // Type of View to be modified
-            case "TextView": // AppCompatTextView
-                AppCompatTextView textView = (AppCompatTextView) view; // Stores the View in the correct element
-                textView.setTypeface(ResourcesCompat.getFont(context, fontID)); // Modifies View font
-                break;
-            case "EditText": // AppCompatEditText
-                AppCompatEditText editText = (AppCompatEditText) view; // Stores the View in the correct element
-                editText.setTypeface(ResourcesCompat.getFont(context, fontID)); // Modifies View font
-                break;
+    public void changeViewFont(View... viewID) { // Modify the font of a view
+        for (View view : viewID) { // For each View received
+            switch (view.getClass().toString()) { // Type of View to be modified
+                case "class androidx.appcompat.widget.AppCompatTextView": // AppCompatTextView
+                    AppCompatTextView textView = (AppCompatTextView) view; // Stores the View in the correct element
+                    textView.setTypeface(ResourcesCompat.getFont(context, getFontResource())); // Modifies View font
+                    break;
+                case "class androidx.appcompat.widget.AppCompatEditText": // AppCompatEditText
+                    AppCompatEditText editText = (AppCompatEditText) view; // Stores the View in the correct element
+                    editText.setTypeface(ResourcesCompat.getFont(context, getFontResource())); // Modifies View font
+                    break;
+            }
         }
     }
 

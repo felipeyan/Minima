@@ -1,4 +1,4 @@
- package com.felipeyan.minima;
+package com.felipeyan.minima;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -52,11 +52,9 @@ public class MainActivity extends AppCompatActivity {
         orderIcon = findViewById(R.id.orderIcon);
 
         // Changes the Activity text font to the stored value
-        new Preferences(this).changeAppFont(this);
-        // Changes toolbar title font
-        new Preferences(this).changeViewFont("TextView", mainTitle);
-        // Changes the listing order indication text
-        new Preferences(this).changeViewFont("TextView", orderText);
+        new Preferences(this).changeAppFont();
+        // Changes toolbar title and listing order indication text font
+        new Preferences(this).changeViewFont(mainTitle, orderText);
         // Changes the listing order indication icon based on user preference
         new Preferences(this).changeOrderIcon(orderIcon);
 

@@ -69,15 +69,14 @@
                     android:background="@android:color/transparent"/>
                 <view class="com.felipeyan.minima.PinActivity$PinButton" android:text="0" style="@style/pinNumber"/>
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/pinBackspace"
                     android:layout_width="0dp"
                     android:layout_height="28dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_backspace"
-                    android:tint="@color/white"
-                    android:onClick="deleteNumber"
-                    tools:ignore="UsingOnClickInXml"/>
+                    android:tint="@color/white"/>
             </GridLayout>
         </LinearLayout>
     </LinearLayout>

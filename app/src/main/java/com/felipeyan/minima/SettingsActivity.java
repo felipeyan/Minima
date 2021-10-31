@@ -47,9 +47,9 @@ public class SettingsActivity extends AppCompatActivity {
         super.onStart();
 
         // Changes the Activity text font to the stored value
-        new Preferences(this).changeAppFont(this);
+        new Preferences(this).changeAppFont();
         // Changes toolbar title font
-        new Preferences(this).changeViewFont("TextView", settingsTitle);
+        new Preferences(this).changeViewFont(settingsTitle);
     }
 
     public class settingsItemClick implements AdapterView.OnItemClickListener {

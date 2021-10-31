@@ -28,9 +28,9 @@ public class NoteActivity extends AppCompatActivity {
         super.onStart();
 
         // Changes the Activity text font to the stored value
-        new Preferences(this).changeAppFont(this);
+        new Preferences(this).changeAppFont();
         // Changes note field font
-        new Preferences(this).changeViewFont("EditText", noteField);
+        new Preferences(this).changeViewFont(noteField);
     }
 
     public void receivedData() {
