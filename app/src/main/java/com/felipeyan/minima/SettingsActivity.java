@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class SettingsActivity extends AppCompatActivity {
+    Context context;
     Export export;
     AppCompatTextView settingsTitle;
     ListView settingsList;
@@ -32,6 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        context = this;
         export = new Export(this);
         settingsTitle = findViewById(R.id.settingsTitle);
         settingsList = findViewById(R.id.settingsLV);
@@ -68,15 +70,10 @@ public class SettingsActivity extends AppCompatActivity {
                 case 0: // Set PIN password option
                     showPinDialog(); // Shows the PIN configuration dialog
                     break;
-                case 1:
+                case 1: // Option to choose the app's font
                     String[] fonts = getResources().getStringArray(R.array.fonts); // Stores the fonts list
 
-                    // Creates a single-select RadioGroup dialog
-                    // The second parameter in SingleChoiceItems selects the RadioButton corresponding to the font stored in SharedPreferences
-                    new AlertDialog.Builder(SettingsActivity.this, R.style.fontsDialog)
-                            .setTitle(R.string.choose_font)
-                            .setSingleChoiceItems(fonts, new Preferences(SettingsActivity.this).getFont(), new fontClick(SettingsActivity.this, fonts))
-                            .show();
+                    new singleChoiceMenu(context, R.string.choose_font, fonts, new Preferences(context).getStringArrayIndex(fonts, "userFont"), new singleChoiceMenuClick(context, fonts, "fontMenu"));
                     break;
                 case 2: // Export all notes in TXT option
                     if (export.checkStoragePermission()) {  // Checks if the application has permission to store files
@@ -91,7 +88,12 @@ public class SettingsActivity extends AppCompatActivity {
                         }, 1); // Request storage access permission
                     }
                     break;
-                case 3: // Delete database option
+                case 3: // Option to choose the date and time format
+                    String[] dateTimeFormats = getResources().getStringArray(R.array.date_time_formats); // Stores list of date and time formats
+
+                    new singleChoiceMenu(context, R.string.date_time_formats, dateTimeFormats, new Preferences(context).getStringArrayIndex(dateTimeFormats, "dateTimeFormat"), new singleChoiceMenuClick(context, dateTimeFormats, "dateTimeMenu"));
+                    break;
+                case 4: // Delete database option
                     deleteDatabase(); // Calls the dialog function to delete the database
                     break;
                 default:
@@ -101,8 +103,51 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    // Single choice RadioGroup menu builder
+    public static class singleChoiceMenu extends AlertDialog.Builder {
+        public singleChoiceMenu(@NonNull Context context, int title, String[] items, int checkedItem, DialogInterface.OnClickListener dialogClick) {
+            super(context, R.style.dialogStyle);
+
+            setTitle(title);
+            setSingleChoiceItems(items, checkedItem, dialogClick);
+            show();
+        }
+    }
+
+    // Click action for RadioGroup single choice menus
+    public static class singleChoiceMenuClick implements DialogInterface.OnClickListener {
+        Context context;
+        String[] options;
+        String menuName;
+
+        public singleChoiceMenuClick(Context context, String[] options, String menuName) {
+            this.context = context;
+            this.options = options;
+            this.menuName = menuName; // Used to indicate which menu is being called
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int i) {
+            switch (menuName) {
+                case "fontMenu": // Click action for font choice menu
+                    new Preferences(context).storeFont(options[i]); // Stores the new font selected in preferences
+                    Toast.makeText(context, R.string.changed_font, Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    ((Activity) context).recreate();
+                    break;
+                case "dateTimeMenu": // Click action for date and time format choice menu
+                    new Preferences(context).storeDateTimeFormat(options[i]); // Stores the new date and time format in preferences
+                    Toast.makeText(context, R.string.changed_date_time_format, Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
     public void deleteDatabase() {
-        new AlertDialog.Builder(SettingsActivity.this)
+        new AlertDialog.Builder(context)
             .setMessage(R.string.proceed)
             .setCancelable(true)
             .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -114,8 +159,8 @@ public class SettingsActivity extends AppCompatActivity {
             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    new Database(SettingsActivity.this).deleteDatabase();
-                    Toast.makeText(SettingsActivity.this, R.string.database_deleted, Toast.LENGTH_SHORT).show();
+                    new Database(context).deleteDatabase();
+                    Toast.makeText(context, R.string.database_deleted, Toast.LENGTH_SHORT).show();
                 }
             }).show();
     }
@@ -197,27 +242,6 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             dialog.dismiss(); // Closes the dialog
-        }
-    }
-
-    // When an item in the RadioGroup of fonts is selected
-    public static class fontClick implements DialogInterface.OnClickListener {
-        Context context;
-        String[] fonts;
-        String selectedFont;
-
-        public fontClick(Context context, String[] fonts) {
-            this.context = context;
-            this.fonts = fonts; // Stores the received fonts list
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            selectedFont = fonts[which]; // Stores the font name with the value corresponding to the selected index
-            new Preferences(context).storeFont(fonts[which]); // Stores the font name in SharedPreferences
-            Toast.makeText(context, R.string.changed_font, Toast.LENGTH_SHORT).show(); // Display a success message
-            dialog.dismiss(); // Closes the dialog
-            ((Activity) context).recreate(); // Rebuilds the view
         }
     }
 

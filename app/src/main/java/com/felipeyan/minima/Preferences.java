@@ -31,18 +31,10 @@ public class Preferences {
         editor.apply(); // Updates SharedPreferences
     }
 
-    protected String getPassword() throws Exception { // Returns the stored password that encrypts the notes
-        return encryption.decrypt(preferences.getString("userPw", ""), "");
-    }
-
     protected void storePIN(String pin) throws Exception { // Store encrypted PIN received from SettingsActivity
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("userPIN", encryption.encrypt(pin, getPassword()));
         editor.apply();
-    }
-
-    protected String getPIN() throws Exception { // Returns the stored PIN that locks the application
-        return encryption.decrypt(preferences.getString("userPIN", ""), getPassword());
     }
 
     protected void storeFont(String font) { // Stores the name of the font received in SharedPreferences
@@ -51,18 +43,50 @@ public class Preferences {
         editor.apply();
     }
 
-    protected int getFont() { // Returns the index of the name of the font stored in the fonts list
-        String[] fonts = context.getResources().getStringArray(R.array.fonts); // Receives the font list
-        String storedFont = preferences.getString("userFont", ""); // Receives the font stored in SharedPreferences
-        int fontPos; // Font index in the fonts list
+    protected String getPassword() throws Exception { // Returns the stored password that encrypts the notes
+        return encryption.decrypt(preferences.getString("userPw", ""), "");
+    }
 
-        for (fontPos = 0; fontPos < fonts.length; fontPos++) {
-            if (fonts[fontPos].equals(storedFont)) { // if the fonts are the same
-                return fontPos; // Return the corresponding position in the list
-            } // Keep adding 1 to the fontPos variable until find the correct index
+    protected void storeOrder(String order) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("listOrder", order);
+        editor.apply();
+    }
+
+    protected void storeDateTimeFormat(String dateTimeFormat) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("dateTimeFormat", dateTimeFormat);
+        editor.apply();
+    }
+
+    protected String getPIN() throws Exception { // Returns the stored PIN that locks the application
+        return encryption.decrypt(preferences.getString("userPIN", ""), getPassword());
+    }
+
+    // Returns the index of a value in a string-array
+    protected int getStringArrayIndex(String[] array, String preferenceName) {
+        String storedValue = preferences.getString(preferenceName, ""); // Stores the value saved in preferences
+
+        if (storedValue.isEmpty()) {
+            switch (preferenceName) {
+                case "userFont": // Font default value
+                    storedValue = "Lato";
+                    break;
+                case "dateTimeFormat": // Default date and time format value
+                    storedValue = "12/31/2021 12h59";
+                    break;
+            }
         }
 
-        return fontPos;
+        int arrayPos;
+
+        for (arrayPos = 0; arrayPos < array.length; arrayPos++) {
+            if (array[arrayPos].equals(storedValue)) {
+                return arrayPos;
+            }
+        }
+
+        return arrayPos;
     }
 
     protected int getFontResource() {
@@ -71,12 +95,6 @@ public class Preferences {
         if (font.isEmpty()) font = "Lato"; // If there is no value stored choose "Lato" as the default font
 
         return context.getResources().getIdentifier(font.toLowerCase().replaceAll(" ", "_"), "font", context.getPackageName());
-    }
-
-    protected void storeOrder(String order) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("listOrder", order);
-        editor.apply();
     }
 
     public void changeAppFont() {
@@ -116,5 +134,35 @@ public class Preferences {
                 orderIcon.setImageResource(R.drawable.ic_up);
                 break;
         }
+    }
+
+    // Formats the date and time received from the database to the preferred format
+    public String dateTimeDisplay(String dateTime) {
+        // Value Received from Database: 20211231125900 (Year, Month, Day, Hours, Minutes, Seconds)
+        String formattedValue = "";
+
+        switch (preferences.getString("dateTimeFormat", "")) {
+            case "12/31/2021 12h59": default:
+                formattedValue =
+                        dateTime.substring(4, 6) + "/" + // Month
+                        dateTime.substring(6, 8) + "/" + // Day
+                        dateTime.substring(0, 4) + " "; // Year
+                break;
+            case "31/12/2021 12h59":
+                formattedValue =
+                        dateTime.substring(6, 8) + "/" + // Day
+                        dateTime.substring(4, 6) + "/" + // Month
+                        dateTime.substring(0, 4) + " "; // Year
+                break;
+            case "2021/12/31 12h59":
+                formattedValue =
+                        dateTime.substring(0, 4) + "/" + // Year
+                        dateTime.substring(4, 6) + "/" + // Month
+                        dateTime.substring(6, 8) + " "; // Day
+                break;
+        }
+
+        formattedValue += dateTime.substring(8, 10) + "h" + dateTime.substring(10, 12); // Time
+        return formattedValue;
     }
 }

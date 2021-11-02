@@ -28,7 +28,7 @@
         <item name="android:background">@drawable/pin_num_bg</item>
     </style>
 
-    <style name="fontsDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="dialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/gray</item>
         <item name="colorPrimary">@color/black</item>
     </style>

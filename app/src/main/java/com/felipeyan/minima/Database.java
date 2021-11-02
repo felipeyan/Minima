@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Database extends SQLiteOpenHelper {
-
     Context context;
 
     public static final String DATABASE_NAME = "db_notes";
@@ -111,7 +110,6 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public String formatDate() { // Returns the current date and time in String format
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-        return simpleDateFormat.format(new Date());
+        return new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
     }
 }

@@ -46,8 +46,8 @@ public class Export {
         }
     }
 
-    public String fileName() { // Returns the filename based on the current year, month and day
-        return new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date()) + "notes.txt";
+    public String fileName() { // Returns the filename based on the current date and time in String format
+        return new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date()) + "notes.txt";
     }
 
     public StringBuilder getNotes() { // Returns a String with all notes formatted and decrypted

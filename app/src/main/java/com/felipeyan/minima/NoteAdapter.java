@@ -53,6 +53,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         // Checks the length of the current note and displays only part of it to save processing
         reduceNoteDisplay(decryptedNote, holder);
 
+        // Displays formatted date and time
+        holder.dateTime.setText(new Preferences(context).dateTimeDisplay(noteMOD.get(position)));
+
         // Starts the note activity with the values of the clicked note
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +131,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
             holder.note.setText(decryptedNote.substring(0, 150));
         }
     }
-    
+
     public class noteMenu implements PopupMenu.OnMenuItemClickListener {
         Context context;
         int position;
@@ -179,12 +182,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         AppCompatTextView note;
+        AppCompatTextView dateTime;
         CardView layout;
 
         public ViewHolder(@NonNull View view) {
             super(view);
 
             note = view.findViewById(R.id.notePreview);
+            dateTime = view.findViewById(R.id.dateTimePreview);
             layout = view.findViewById(R.id.noteLayout);
         }
     }

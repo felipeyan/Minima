@@ -27,6 +27,7 @@
         <item>Configurar senha de PIN</item>
         <item>Mudar fonte do aplicativo</item>
         <item>Exportar todas as notas em TXT</item>
+        <item>Alterar o tipo de formato de data e hora</item>
         <item>Apagar todo o banco de dados</item>
     </string-array>
     <string name="storage_permission">A exportação de arquivos necessita da permissão de armazenamento, ative-a nas permissões desse aplicativo</string>
@@ -44,4 +45,6 @@
     <string name="list_order">Última modificação</string>
     <string name="list_order_asc">Ordem de lista crescente</string>
     <string name="list_order_desc">Ordem de lista decrescente</string>
+    <string name="date_time_formats">Formatos de data e hora</string>
+    <string name="changed_date_time_format">Formato de data e hora alterado</string>
 </resources>

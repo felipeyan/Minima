@@ -8,7 +8,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2777777777777778" />
         <entry key="app/src/main/res/layout/activity_main2.xml" value="0.18425925925925926" />
         <entry key="app/src/main/res/layout/activity_pin.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/item_note.xml" value="0.17314814814814813" />
+        <entry key="app/src/main/res/layout/item_note.xml" value="0.2777777777777778" />
         <entry key="app/src/main/res/layout/new_pin.xml" value="0.18425925925925926" />
         <entry key="app/src/main/res/menu/main_menu.xml" value="0.1" />
         <entry key="app/src/main/res/menu/note_menu.xml" value="0.22" />
@@ -20,5 +20,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.2777777777777778" />
+      </ProjectState>
+    </option>
   </component>
 </project>
