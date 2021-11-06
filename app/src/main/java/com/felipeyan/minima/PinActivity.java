@@ -10,6 +10,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 import java.util.Objects;
 
 public class PinActivity extends AppCompatActivity {
+    Preferences preferences;
+
     AppCompatTextView pinTitle;
     AppCompatEditText pinInput;
     AppCompatImageView pinBackspace;
@@ -28,6 +31,8 @@ public class PinActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin);
+
+        preferences = new Preferences(this);
 
         pinTitle = findViewById(R.id.pinTitle);
         pinInput = findViewById(R.id.pinInput);
@@ -41,10 +46,13 @@ public class PinActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        // Changes the Activity text font to the stored value
-        new Preferences(this).changeAppFont();
-        // Changes toolbar title font
-        new Preferences(this).changeViewFont(pinTitle);
+        // If a PIN password exists, go to PinActivity
+        if (getSharedPreferences("userPref", MODE_PRIVATE).getString("userPIN", "").isEmpty()) {
+            startActivity(new Intent(this, MainActivity.class));
+        }
+
+        preferences.changeAppFont(); // Changes the Activity text font to the stored value
+        preferences.changeViewFont(pinTitle); // Changes toolbar title font
     }
 
     public void insertNumber(View view) { // Applied via the onClick property in pinNumber (values/themes.xml)
@@ -79,8 +87,8 @@ public class PinActivity extends AppCompatActivity {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             try { // Check if the input text is the same as the stored PIN
-                if (s.toString().equals(new Preferences(PinActivity.this).getPIN())) {
-                    ((Activity) PinActivity.this).finish(); // If it is the same, close this activity
+                if (s.toString().equals(preferences.getPIN())) {
+                    startActivity(new Intent(PinActivity.this, MainActivity.class)); // If it is the same, close this activity
                 }
             } catch (Exception e) { // Display the error message
                 Toast.makeText(PinActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
@@ -109,6 +117,6 @@ public class PinActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() { // Display the error message
-        Toast.makeText(this, R.string.cant_close_screen, Toast.LENGTH_SHORT).show();
+        finish();
     }
 }

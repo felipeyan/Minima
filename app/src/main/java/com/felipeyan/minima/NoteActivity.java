@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,9 @@ import android.widget.Toast;
 public class NoteActivity extends AppCompatActivity {
     Encryption encryption = new Encryption();
     Database database = new Database(this);
+    Preferences preferences;
+
+    Context context;
     AppCompatEditText noteField;
 
     @Override
@@ -19,6 +23,9 @@ public class NoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
 
+        preferences = new Preferences(this);
+
+        context = this;
         noteField = findViewById(R.id.noteField);
         receivedData();
     }
@@ -27,10 +34,8 @@ public class NoteActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        // Changes the Activity text font to the stored value
-        new Preferences(this).changeAppFont();
-        // Changes note field font
-        new Preferences(this).changeViewFont(noteField);
+        preferences.changeAppFont(); // Changes the Activity text font to the stored value
+        preferences.changeViewFont(noteField); // Changes note field font
     }
 
     public void receivedData() {
@@ -75,10 +80,10 @@ public class NoteActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     // Update the new value in the database
                     if (database.updateData(getIntent().getStringExtra("selectedID"), encryptedNote(noteField.getText().toString()))) {
-                        Toast.makeText(NoteActivity.this, R.string.updated_note, Toast.LENGTH_SHORT).show(); // Display a success message
+                        Toast.makeText(context, R.string.updated_note, Toast.LENGTH_SHORT).show(); // Display a success message
                         finish();
                     } else {
-                        Toast.makeText(NoteActivity.this, R.string.error_updating, Toast.LENGTH_SHORT).show(); // Display a error message
+                        Toast.makeText(context, R.string.error_updating, Toast.LENGTH_SHORT).show(); // Display a error message
                     }
                 }
             })
@@ -92,7 +97,7 @@ public class NoteActivity extends AppCompatActivity {
 
     protected String encryptedNote(String note) { // Returns received text encrypted with stored password
         try {
-            note = encryption.encrypt(note, new Preferences(this).getPassword());
+            note = encryption.encrypt(note, preferences.getPassword());
         } catch (Exception e) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show(); // Display a error message
         }

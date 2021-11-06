@@ -11,7 +11,6 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 public class Encryption {
-
     String AES = "AES";
 
     protected String encrypt(String data, String password) throws Exception {

@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> implements Filterable {
-
     Database database;
     Encryption encryption = new Encryption();
+
     Context context;
     ArrayList<String> noteIDS, noteTEXTS, noteMOD, noteTEXTSAll;
 
@@ -86,7 +86,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     public void openMenu(View view, int position) { // Menu when the note is long clicked
         PopupMenu menu = new PopupMenu(context, view);
         menu.getMenuInflater().inflate(R.menu.note_menu, menu.getMenu());
-        menu.setOnMenuItemClickListener(new noteMenu(context, position));
+        menu.setOnMenuItemClickListener(new noteMenu(position));
         menu.show(); // Display the menu
     }
 
@@ -133,11 +133,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     }
 
     public class noteMenu implements PopupMenu.OnMenuItemClickListener {
-        Context context;
         int position;
 
-        public noteMenu(Context context, int position) {
-            this.context = context;
+        public noteMenu(int position) {
             this.position = position;
         }
 

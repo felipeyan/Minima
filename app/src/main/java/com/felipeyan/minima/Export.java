@@ -18,8 +18,8 @@ public class Export {
     Encryption encryption = new Encryption();
     Context context;
 
-    public Export(Context originContext) {
-        context = originContext;
+    public Export(Context context) {
+        this.context = context;
     }
 
     public boolean checkStoragePermission() { // Returns true if the app has permission to store files
@@ -54,7 +54,7 @@ public class Export {
         StringBuilder notes = new StringBuilder();
         int notePos = 0;
 
-        for (String note: new Database(context).getAllData(context, "note", "ASC")) {
+        for (String note: new Database(context).getAllData("note", "ASC")) {
             notes.append("### Entry number ").append(notePos).append(" ###\n") // Separates the notes using the variable notePos as an index
                     .append(encryption.decryptNote(context, note)) // Add the decrypted note
                     .append("\n\n"); // Skip two lines

@@ -63,6 +63,12 @@ public class Preferences {
         return encryption.decrypt(preferences.getString("userPIN", ""), getPassword());
     }
 
+    protected void removePIN() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove("userPIN");
+        editor.apply();
+    }
+
     // Returns the index of a value in a string-array
     protected int getStringArrayIndex(String[] array, String preferenceName) {
         String storedValue = preferences.getString(preferenceName, ""); // Stores the value saved in preferences
@@ -97,7 +103,7 @@ public class Preferences {
         return context.getResources().getIdentifier(font.toLowerCase().replaceAll(" ", "_"), "font", context.getPackageName());
     }
 
-    public void changeAppFont() {
+    protected void changeAppFont() {
         String storedFont = preferences.getString("userFont", ""); // Stored font
         String fontResource = "fontLato"; // Default app font
 
@@ -108,7 +114,7 @@ public class Preferences {
         context.getTheme().applyStyle(context.getResources().getIdentifier(fontResource, "style", context.getPackageName()), true);
     }
 
-    public void changeViewFont(View... viewID) { // Modify the font of a view
+    protected void changeViewFont(View... viewID) { // Modify the font of a view
         for (View view : viewID) { // For each View received
             switch (view.getClass().toString()) { // Type of View to be modified
                 case "class androidx.appcompat.widget.AppCompatTextView": // AppCompatTextView

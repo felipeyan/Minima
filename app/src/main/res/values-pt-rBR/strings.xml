@@ -47,4 +47,6 @@
     <string name="list_order_desc">Ordem de lista decrescente</string>
     <string name="date_time_formats">Formatos de data e hora</string>
     <string name="changed_date_time_format">Formato de data e hora alterado</string>
+    <string name="remove_pass">Você tem certeza que quer remover sua senha?</string>
+    <string name="removed_pass">Sua senha foi removida com sucesso</string>
 </resources>

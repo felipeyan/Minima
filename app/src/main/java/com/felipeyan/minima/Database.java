@@ -21,9 +21,9 @@ public class Database extends SQLiteOpenHelper {
     public static final String NOTE = "note";
     public static final String MOD_DATE = "mod_date";
 
-    public Database(Context originContext) { // Database creation
-        super(originContext, DATABASE_NAME, null, 1);
-        context = originContext;
+    public Database(Context context) { // Database creation
+        super(context, DATABASE_NAME, null, 1);
+        this.context = context;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class Database extends SQLiteOpenHelper {
         return db.delete(TABLE_NAME, "id = ?", new String[] { id });
     }
 
-    public ArrayList<String> getAllData(Context context, String column, String order) {
+    public ArrayList<String> getAllData(String column, String order) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // The String "column" indicates which column of the table will be searched

@@ -23,6 +23,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     Database database = new Database(this);
+    Preferences preferences;
+
     ArrayList<String> noteIDS, noteTEXTS, noteMOD;
     AppCompatTextView mainTitle, orderText;
     AppCompatImageView orderIcon;
@@ -34,16 +36,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // If a PIN password exists, go to PinActivity
-        if (!getSharedPreferences("userPref", MODE_PRIVATE).getString("userPIN", "").isEmpty()) {
-            startActivity(new Intent(this, PinActivity.class));
-        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
+        preferences = new Preferences(this);
 
         searchView = findViewById(R.id.mainSV);
         recyclerView = findViewById(R.id.mainRV);
@@ -51,12 +50,9 @@ public class MainActivity extends AppCompatActivity {
         orderText = findViewById(R.id.orderText);
         orderIcon = findViewById(R.id.orderIcon);
 
-        // Changes the Activity text font to the stored value
-        new Preferences(this).changeAppFont();
-        // Changes toolbar title and listing order indication text font
-        new Preferences(this).changeViewFont(mainTitle, orderText);
-        // Changes the listing order indication icon based on user preference
-        new Preferences(this).changeOrderIcon(orderIcon);
+        preferences.changeAppFont(); // Changes the Activity text font to the stored value
+        preferences.changeViewFont(mainTitle, orderText); // Changes toolbar title and listing order indication text font
+        preferences.changeOrderIcon(orderIcon); // Changes the listing order indication icon based on user preference
 
         styleSearch(); // Stylize SearchView
         verifyPassword(); // Calls the function that checks the stored password
@@ -90,18 +86,18 @@ public class MainActivity extends AppCompatActivity {
         // Checks the value stored in preferences
         switch (getSharedPreferences("userPref", MODE_PRIVATE).getString("listOrder", "")) {
             case "DESC": default: // If the value is DESC (system default)
-                new Preferences(this).storeOrder("ASC"); // Stores the new value (ASC)
+                preferences.storeOrder("ASC"); // Stores the new value (ASC)
                 Toast.makeText(this, R.string.list_order_asc, Toast.LENGTH_SHORT).show(); // Display the modification message
                 listNotes("ASC"); // Recreates RecyclerView with the new display order (ascending)
                 break;
             case "ASC": // If the value is ASC
-                new Preferences(this).storeOrder("DESC"); // Stores the new value (DESC)
+                preferences.storeOrder("DESC"); // Stores the new value (DESC)
                 Toast.makeText(this, R.string.list_order_desc, Toast.LENGTH_SHORT).show(); // Display the modification message
                 listNotes("DESC"); // Recreates RecyclerView with the new display order (descending)
                 break;
         }
 
-        new Preferences(this).changeOrderIcon(orderIcon); // Displays the icon corresponding to the option
+        preferences.changeOrderIcon(orderIcon); // Displays the icon corresponding to the option
     }
 
     public static class menuClick implements PopupMenu.OnMenuItemClickListener {
@@ -113,10 +109,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            if (item.getTitle().toString().equals(context.getString(R.string.menu_settings))) {
+            String menuTitle = item.getTitle().toString();
+
+            if (menuTitle.equals(context.getString(R.string.menu_settings))) {
                 MainActivity.openSettings(context);
                 return true;
-            } else if (item.getTitle().toString().equals(context.getString(R.string.menu_about))) {
+            } else if (menuTitle.equals(context.getString(R.string.menu_about))) {
                 MainActivity.openAbout(context);
                 return true;
             } else {
@@ -127,9 +125,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void listNotes(String order) { // Creates the RecyclerView that displays the notes saved in the database
         // The string "order" indicates the order of values to the database (ASC = ascending, DESC = descending)
-        noteIDS = database.getAllData(this, "id", order); // Collects all note IDS
-        noteTEXTS = database.getAllData(this, "note", order); // Collect all note texts
-        noteMOD = database.getAllData(this, "mod_date", order); // Collects all last modified dates
+        noteIDS = database.getAllData("id", order); // Collects all note IDS
+        noteTEXTS = database.getAllData("note", order); // Collect all note texts
+        noteMOD = database.getAllData("mod_date", order); // Collects all last modified dates
 
         noteAdapter = new NoteAdapter(this, noteIDS, noteTEXTS, noteMOD);
         recyclerView.setAdapter(noteAdapter);
@@ -151,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     public void verifyPassword() { // Check if you have a password for note encryption, if not, create and store a new one
         if (getSharedPreferences("userPref", MODE_PRIVATE).getString("userPw", "").isEmpty()) {
             try {
-                new Preferences(this).generateDefaultPass();
+                preferences.generateDefaultPass();
             } catch (Exception e) {
                 Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
             }
@@ -182,6 +180,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void showSearchView(View view) { // When the search icon is pressed
         toggleSearchView(); // Show search layout
+    }
+
+    @Override
+    public void onBackPressed() { // Display the error message
+        Toast.makeText(this, R.string.cant_close_screen, Toast.LENGTH_SHORT).show();
     }
 
     @Override
