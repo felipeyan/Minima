@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Minima</string>
-    <string name="app_version" translatable="false">0.9.5</string>
+    <string name="app_version" translatable="false">0.9.6</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="cancel">Cancel</string>

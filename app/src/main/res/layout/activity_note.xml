@@ -1,27 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NoteActivity"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
-    <requestFocus/>
+    tools:context=".NoteActivity">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/noteField"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomPanel">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/noteField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:gravity="start"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:minLines="25"
+            android:lineSpacingExtra="4dp"
+            android:hint="@string/start_typing"
+            android:textColorHint="@color/gray"
+            android:inputType="textMultiLine"
+            android:background="@android:color/transparent"/>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottomPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:gravity="start"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:minLines="30"
-        android:lineSpacingExtra="4dp"
-        android:hint="@string/start_typing"
-        android:textColorHint="@color/gray"
-        android:inputType="textMultiLine"
-        android:background="@android:color/transparent"/>
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:background="@color/black">
 
-</androidx.core.widget.NestedScrollView>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="21dp"
+                android:tint="@color/white"
+                android:src="@drawable/ic_date"
+                android:onClick="addDate"
+                tools:ignore="UsingOnClickInXml"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="21dp"
+                android:tint="@color/white"
+                android:src="@drawable/ic_time"
+                android:onClick="addTime"
+                tools:ignore="UsingOnClickInXml"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
