@@ -103,7 +103,7 @@ public class NoteActivity extends AppCompatActivity {
 
     protected String encryptedNote(String note) { // Returns received text encrypted with stored password
         try {
-            note = encryption.encrypt(note, preferences.getPassword());
+            note = encryption.encrypt(note, preferences.getEncryptedData("userPw", false));
         } catch (Exception e) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show(); // Display a error message
         }

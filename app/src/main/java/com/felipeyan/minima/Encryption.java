@@ -34,7 +34,7 @@ public class Encryption {
 
     protected String decryptNote(Context context, String note) {
         try { // Decrypts the note using the stored password
-            note = decrypt(note, new Preferences(context).getPassword());
+            note = decrypt(note, new Preferences(context).getEncryptedData("userPw", false));
         } catch (Exception e) {
             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
         }

@@ -24,48 +24,39 @@ public class Preferences {
         preferences = context.getSharedPreferences("userPref", MODE_PRIVATE);
     }
 
-    protected void generateDefaultPass() throws Exception {
-        SharedPreferences.Editor editor = preferences.edit();
-        // Encrypts and stores a string of 11 random characters
-        editor.putString("userPw", encryption.encrypt(UUID.randomUUID().toString().replaceAll("-", "").substring(0, 11), ""));
-        editor.apply(); // Updates SharedPreferences
+    protected String getData(String preference) {
+        return preferences.getString(preference, "");
     }
 
-    protected void storePIN(String pin) throws Exception { // Store encrypted PIN received from SettingsActivity
+    protected String getEncryptedData(String preference, boolean usingPassword) throws Exception {
+        if (usingPassword) {
+            return encryption.decrypt(getData(preference), encryption.decrypt(getData("userPw"), ""));
+        } else {
+            return encryption.decrypt(getData(preference), "");
+        }
+    }
+
+    protected void storeData(String preference, String value) {
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("userPIN", encryption.encrypt(pin, getPassword()));
+        editor.putString(preference, value);
         editor.apply();
     }
 
-    protected void storeFont(String font) { // Stores the name of the font received in SharedPreferences
+    protected void storeEncryptedData(String preference, String value) throws Exception {
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("userFont", font);
+
+        if (getData("userPw").isEmpty()) {
+            editor.putString(preference, encryption.encrypt(value, ""));
+        } else {
+            editor.putString(preference, encryption.encrypt(value, getEncryptedData("userPw", false)));
+        }
+
         editor.apply();
     }
 
-    protected String getPassword() throws Exception { // Returns the stored password that encrypts the notes
-        return encryption.decrypt(preferences.getString("userPw", ""), "");
-    }
-
-    protected void storeOrder(String order) {
+    protected void removeData(String preference) {
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("listOrder", order);
-        editor.apply();
-    }
-
-    protected void storeDateTimeFormat(String dateTimeFormat) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("dateTimeFormat", dateTimeFormat);
-        editor.apply();
-    }
-
-    protected String getPIN() throws Exception { // Returns the stored PIN that locks the application
-        return encryption.decrypt(preferences.getString("userPIN", ""), getPassword());
-    }
-
-    protected void removePIN() {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.remove("userPIN");
+        editor.remove(preference);
         editor.apply();
     }
 
@@ -96,7 +87,7 @@ public class Preferences {
     }
 
     protected int getFontResource() {
-        String font = preferences.getString("userFont", ""); // Receives the font stored in SharedPreferences
+        String font = getData("userFont"); // Receives the font stored in SharedPreferences
 
         if (font.isEmpty()) font = "Lato"; // If there is no value stored choose "Lato" as the default font
 
@@ -104,7 +95,7 @@ public class Preferences {
     }
 
     protected void changeAppFont() {
-        String storedFont = preferences.getString("userFont", ""); // Stored font
+        String storedFont = getData("userFont"); // Stored font
         String fontResource = "fontLato"; // Default app font
 
         // If the stored font is not empty, concatenate "font" with the name of the stored font
@@ -132,7 +123,7 @@ public class Preferences {
     public void changeOrderIcon(View view) {
         AppCompatImageView orderIcon = (AppCompatImageView) view;
 
-        switch (preferences.getString("listOrder", "")) {
+        switch (getData("listOrder")) {
             case "DESC": default:
                 orderIcon.setImageResource(R.drawable.ic_down);
                 break;
@@ -147,7 +138,7 @@ public class Preferences {
         // Value Received from Database: 20211231125900 (Year, Month, Day, Hours, Minutes, Seconds)
         String formattedValue = "";
 
-        switch (preferences.getString("dateTimeFormat", "")) {
+        switch (getData("dateTimeFormat")) {
             case "12/31/2021 12h59": default:
                 formattedValue =
                         dateTime.substring(4, 6) + "/" + // Month

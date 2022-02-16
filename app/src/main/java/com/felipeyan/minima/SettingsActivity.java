@@ -128,7 +128,7 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             if (pinInput.getText().toString().isEmpty()) { // Displays an error message if the PIN is empty
-                if (getSharedPreferences("userPref", MODE_PRIVATE).getString("userPIN", "").isEmpty()) {
+                if (preferences.getData("userPIN").isEmpty()) {
                     Toast.makeText(context, R.string.empty_pin, Toast.LENGTH_SHORT).show();
                 } else {
                     dialogMenus.new dialogBuilder(R.string.remove_pass, dialogMenus.new dialogClick("removePassPositive"));
@@ -137,11 +137,11 @@ public class SettingsActivity extends AppCompatActivity {
                 Toast.makeText(context, R.string.short_pin, Toast.LENGTH_SHORT).show();
             } else { // if it's all right
                 try { // Encrypts and stores the entered PIN
-                    preferences.storePIN(pinInput.getText().toString());
+                    preferences.storeEncryptedData("userPIN", pinInput.getText().toString());
                     Toast.makeText(context, R.string.stored_pin, Toast.LENGTH_SHORT).show(); // Display a success message
                     dialog.dismiss(); // Closes the dialog
                 } catch (Exception e) { // Display the error message
-                    Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();;
+                    Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
                 }
             }
         }

@@ -20,6 +20,7 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     Database database = new Database(this);
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        preferences = new Preferences(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
@@ -41,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        preferences = new Preferences(this);
 
         searchView = findViewById(R.id.mainSV);
         recyclerView = findViewById(R.id.mainRV);
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
         styleSearch(); // Stylize SearchView
         verifyPassword(); // Calls the function that checks the stored password
-        listNotes(getSharedPreferences("userPref", MODE_PRIVATE).getString("listOrder", "")); // Calls the RecyclerView creation function
+        listNotes(preferences.getData("listOrder")); // Calls the RecyclerView creation function
 
         searchView.setOnCloseListener(this::toggleSearchView); // When the close search button is pressed
 
@@ -84,14 +85,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void changeOrder(View view) { // Action that changes the order of the note list
         // Checks the value stored in preferences
-        switch (getSharedPreferences("userPref", MODE_PRIVATE).getString("listOrder", "")) {
+        switch (preferences.getData("listOrder")) {
             case "DESC": default: // If the value is DESC (system default)
-                preferences.storeOrder("ASC"); // Stores the new value (ASC)
+                preferences.storeData("listOrder", "ASC"); // Stores the new value (ASC)
                 Toast.makeText(this, R.string.list_order_asc, Toast.LENGTH_SHORT).show(); // Display the modification message
                 listNotes("ASC"); // Recreates RecyclerView with the new display order (ascending)
                 break;
             case "ASC": // If the value is ASC
-                preferences.storeOrder("DESC"); // Stores the new value (DESC)
+                preferences.storeData("listOrder", "DESC"); // Stores the new value (DESC)
                 Toast.makeText(this, R.string.list_order_desc, Toast.LENGTH_SHORT).show(); // Display the modification message
                 listNotes("DESC"); // Recreates RecyclerView with the new display order (descending)
                 break;
@@ -147,9 +148,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void verifyPassword() { // Check if you have a password for note encryption, if not, create and store a new one
-        if (getSharedPreferences("userPref", MODE_PRIVATE).getString("userPw", "").isEmpty()) {
+        if (preferences.getData("userPw").isEmpty()) {
             try {
-                preferences.generateDefaultPass();
+                preferences.storeEncryptedData("userPw", UUID.randomUUID().toString().replaceAll("-", "").substring(0, 11));
             } catch (Exception e) {
                 Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
             }

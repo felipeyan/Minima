@@ -47,7 +47,7 @@ public class PinActivity extends AppCompatActivity {
         super.onStart();
 
         // If a PIN password exists, go to PinActivity
-        if (getSharedPreferences("userPref", MODE_PRIVATE).getString("userPIN", "").isEmpty()) {
+        if (preferences.getData("userPIN").isEmpty()) {
             startActivity(new Intent(this, MainActivity.class));
         }
 
@@ -87,7 +87,7 @@ public class PinActivity extends AppCompatActivity {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             try { // Check if the input text is the same as the stored PIN
-                if (s.toString().equals(preferences.getPIN())) {
+                if (s.toString().equals(preferences.getEncryptedData("userPIN", true))) {
                     startActivity(new Intent(PinActivity.this, MainActivity.class)); // If it is the same, close this activity
                 }
             } catch (Exception e) { // Display the error message

@@ -47,7 +47,7 @@ public class DialogMenus {
         public void onClick(DialogInterface dialog, int i) {
             switch (indicator) {
                 case "removePassPositive":
-                    new Preferences(context).removePIN();
+                    new Preferences(context).removeData("userPIN");
                     Toast.makeText(context, R.string.removed_pass, Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                     break;
@@ -81,13 +81,13 @@ public class DialogMenus {
         public void onClick(DialogInterface dialog, int i) {
             switch (menuName) {
                 case "fontMenu": // Click action for font choice menu
-                    preferences.storeFont(options[i]); // Stores the new font selected in preferences
+                    preferences.storeData("userFont", options[i]); // Stores the new font selected in preferences
                     Toast.makeText(context, R.string.changed_font, Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                     ((Activity) context).recreate();
                     break;
                 case "dateTimeMenu": // Click action for date and time format choice menu
-                    preferences.storeDateTimeFormat(options[i]); // Stores the new date and time format in preferences
+                    preferences.storeData("dateTimeFormat", options[i]); // Stores the new date and time format in preferences
                     Toast.makeText(context, R.string.changed_date_time_format, Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                     break;
