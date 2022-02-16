@@ -1,5 +1,9 @@
 package com.felipeyan.minima;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
@@ -7,10 +11,13 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,6 +25,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class SettingsActivity extends AppCompatActivity {
     Export export = new Export(this); // Files export class
@@ -70,11 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
                     break;
                 case 2: // Export all notes in TXT option
                     if (export.checkStoragePermission()) {  // Checks if the application has permission to store files
-                        if (export.exportTXT()) { // If exported the file successfully, show a message
-                            Toast.makeText(context, R.string.exported_file, Toast.LENGTH_SHORT).show();
-                        } else { // Shows an error message
-                            Toast.makeText(context, R.string.error_exporting_file, Toast.LENGTH_SHORT).show();
-                        }
+                        resultLauncher.launch(export.exportAsTXT());
                     } else {
                         ActivityCompat.requestPermissions(SettingsActivity.this, new String[]{
                             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -99,6 +105,29 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
     }
+
+    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(
+        new ActivityResultContracts.StartActivityForResult(),
+        new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK) {
+                    try {
+                        Uri uri = result.getData().getData();
+                        OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                        outputStream.write(export.getNotes().toString().getBytes());
+                        outputStream.close();
+
+                        Toast.makeText(context, R.string.exported_file, Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                } else if (result.getResultCode() != RESULT_CANCELED) {
+                    Toast.makeText(context, R.string.error_exporting_file, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    );
 
     public void showPinDialog() { // PIN configuration dialog
         Dialog dialog = new Dialog(context);
@@ -155,11 +184,7 @@ public class SettingsActivity extends AppCompatActivity {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             switch (requestCode) {
                 case 1: // Request code for storage access
-                    if (export.exportTXT()) { // Checks if the file export was successful
-                        Toast.makeText(context, R.string.exported_file, Toast.LENGTH_SHORT).show(); // Display a success message
-                    } else { // Display the error message
-                        Toast.makeText(context, R.string.error_exporting_file, Toast.LENGTH_SHORT).show();
-                    }
+                    resultLauncher.launch(export.exportAsTXT());
                     break;
             }
         } else {

@@ -2,14 +2,10 @@ package com.felipeyan.minima;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Environment;
-
 import androidx.core.content.ContextCompat;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -26,24 +22,13 @@ public class Export {
         return ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public boolean exportTXT() { // Function to export all notes in TXT
-        try {
-            File root = new File(Environment.getExternalStorageDirectory(), "Minima");
+    public Intent exportAsTXT() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TITLE, fileName());
 
-            if (!root.exists()) { // If destination directory does not exist
-                root.mkdir(); // Create it
-            }
-
-            FileWriter writer = new FileWriter(new File(root, fileName()));
-
-            writer.append(getNotes()); // Write the received notes into the file
-            writer.flush();
-            writer.close();
-
-            return true;
-        } catch (IOException e) {
-            return false; // Returns false if operation is not successful
-        }
+        return intent;
     }
 
     public String fileName() { // Returns the filename based on the current date and time in String format

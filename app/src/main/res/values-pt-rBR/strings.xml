@@ -22,6 +22,7 @@
     <string name="menu_delete">Excluir</string>
     <string name="menu_duplicate">Duplicar</string>
     <string name="menu_share">Compartilhar</string>
+    <string name="menu_save">Salvar no armazenamento</string>
     <string name="search_note">Pesquisar nota…</string>
     <string-array name="settings">
         <item>Configurar senha de PIN</item>

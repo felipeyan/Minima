@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
 
@@ -39,7 +38,6 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         preferences.changeAppFont(); // Changes the Activity text font to the stored value
         preferences.changeViewFont(noteField); // Changes note field font
     }

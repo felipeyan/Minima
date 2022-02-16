@@ -146,7 +146,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
             String[] menuOptions = {
                     context.getString(R.string.menu_delete),
                     context.getString(R.string.menu_duplicate),
-                    context.getString(R.string.menu_share),
+                    context.getString(R.string.menu_share)
             };
 
             if (menuTitle.equals(menuOptions[0])) {
