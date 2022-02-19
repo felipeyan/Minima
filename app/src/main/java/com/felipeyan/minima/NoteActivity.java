@@ -8,12 +8,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class NoteActivity extends AppCompatActivity {
     Encryption encryption = new Encryption();
@@ -40,6 +42,7 @@ public class NoteActivity extends AppCompatActivity {
         super.onStart();
         preferences.changeAppFont(); // Changes the Activity text font to the stored value
         preferences.changeViewFont(noteField); // Changes note field font
+        noteField.setTextSize(TypedValue.COMPLEX_UNIT_SP, preferences.getFontSize());
     }
 
     public void receivedData() {
@@ -117,13 +120,13 @@ public class NoteActivity extends AppCompatActivity {
 
     public void addDate(View view) {
         String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
-        noteField.setText(noteField.getText().toString() + date);
+        noteField.setText(String.format("%s%s", Objects.requireNonNull(noteField.getText()).toString(), date));
         noteField.setSelection(noteField.getText().toString().length());
     }
 
     public void addTime(View view) {
         String time = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
-        noteField.setText(noteField.getText().toString() + time);
+        noteField.setText(String.format("%s%s", Objects.requireNonNull(noteField.getText()).toString(), time));
         noteField.setSelection(noteField.getText().toString().length());
     }
 }

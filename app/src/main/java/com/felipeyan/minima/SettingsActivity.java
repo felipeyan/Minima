@@ -11,7 +11,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -70,15 +69,13 @@ public class SettingsActivity extends AppCompatActivity {
                 case 0: // Set PIN password option
                     showPinDialog(); // Shows the PIN configuration dialog
                     break;
-                case 1: // Option to choose the app's font
-                    String[] fonts = getResources().getStringArray(R.array.fonts);
-
-                    dialogMenus.new dialogBuilder(R.string.choose_font,
-                        getResources().getStringArray(R.array.fonts),
-                        preferences.getStringArrayIndex(fonts, "userFont"),
-                        dialogMenus.new singleChoiceMenuClick(fonts, "fontMenu"));
+                case 1: // Option to choose note font size
+                    dialogMenus.singleChoiceMenu(R.array.font_size, R.string.choose_font_size, "fontSize", R.string.changed_font_size, false);
                     break;
-                case 2: // Export all notes in TXT option
+                case 2: // Option to choose the app's font
+                    dialogMenus.singleChoiceMenu(R.array.fonts, R.string.choose_font, "userFont", R.string.changed_font, true);
+                    break;
+                case 3: // Export all notes in TXT option
                     if (export.checkStoragePermission()) {  // Checks if the application has permission to store files
                         resultLauncher.launch(export.exportAsTXT());
                     } else {
@@ -87,15 +84,10 @@ public class SettingsActivity extends AppCompatActivity {
                         }, 1); // Request storage access permission
                     }
                     break;
-                case 3: // Option to choose the date and time format
-                    String[] dateTimeFormats = getResources().getStringArray(R.array.date_time_formats);
-
-                    dialogMenus.new dialogBuilder(R.string.date_time_formats,
-                        getResources().getStringArray(R.array.date_time_formats),
-                        preferences.getStringArrayIndex(dateTimeFormats, "dateTimeFormat"),
-                        dialogMenus.new singleChoiceMenuClick(dateTimeFormats, "dateTimeMenu"));
+                case 4: // Option to choose the date and time format
+                    dialogMenus.singleChoiceMenu(R.array.date_time_formats, R.string.date_time_formats, "dateTimeFormat", R.string.changed_date_time_format, false);
                     break;
-                case 4: // Delete database option
+                case 5: // Delete database option
                     dialogMenus.new dialogBuilder(R.string.proceed,
                         dialogMenus.new dialogClick("deleteDBPositive"));
                     break;
@@ -139,7 +131,7 @@ public class SettingsActivity extends AppCompatActivity {
         AppCompatTextView pinOK = dialog.findViewById(R.id.settingsValidatePIN); // OK
         AppCompatTextView pinCancel = dialog.findViewById(R.id.settingsCancelPIN); // Cancel
         pinOK.setOnClickListener(new validatePIN(dialog)); // When OK is pressed
-        pinCancel.setOnClickListener(dialogMenus.new dismissDialog(dialog)); // When cancel is pressed
+        pinCancel.setOnClickListener(new DialogMenus.dismissDialog(dialog)); // When cancel is pressed
 
         dialog.show(); // Displays the dialog
     }

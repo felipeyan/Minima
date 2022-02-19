@@ -3,6 +3,7 @@ package com.felipeyan.minima;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +48,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
 
     @Override
     public void onBindViewHolder(@NonNull NoteAdapter.ViewHolder holder, int position) {
+        holder.note.setTextSize(TypedValue.COMPLEX_UNIT_SP, new Preferences(context).getFontSize());
+
         // Decrypt and store current received note
         String decryptedNote = encryption.decryptNote(context, noteTEXTS.get(holder.getAdapterPosition()));
 

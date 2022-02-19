@@ -69,6 +69,9 @@ public class Preferences {
                 case "userFont": // Font default value
                     storedValue = "Lato";
                     break;
+                case "fontSize": // Font size default value (Medium)
+                    storedValue = context.getResources().getStringArray(R.array.font_size)[1];
+                    break;
                 case "dateTimeFormat": // Default date and time format value
                     storedValue = "12/31/2021 12h59";
                     break;
@@ -130,6 +133,19 @@ public class Preferences {
             case "ASC":
                 orderIcon.setImageResource(R.drawable.ic_up);
                 break;
+        }
+    }
+
+    public int getFontSize() {
+        int fontPreference = getStringArrayIndex(context.getResources().getStringArray(R.array.font_size), "fontSize");
+
+        switch (fontPreference) {
+            case 0: // Small
+                return 14;
+            case 1: default: // Medium
+                return 18;
+            case 2: // Large
+                return 21;
         }
     }
 

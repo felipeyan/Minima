@@ -36,6 +36,38 @@ public class DialogMenus {
         }
     }
 
+    public void singleChoiceMenu(int options, int dialogTitle, String preference, int message, boolean recreate) {
+        String[] optionsList = context.getResources().getStringArray(options);
+
+        new dialogBuilder(dialogTitle,
+                context.getResources().getStringArray(options),
+                new Preferences(context).getStringArrayIndex(optionsList, preference),
+                new singleChoiceMenuClick(optionsList, preference, message, recreate));
+    }
+
+    public class singleChoiceMenuClick implements DialogInterface.OnClickListener {
+        String[] options; // List of options in dialog box
+        String preference; // Preference name to be stored
+        int message; // Message to be displayed
+        boolean recreate; // If it's necessary to recreate the current screen
+
+        public singleChoiceMenuClick(String[] options, String preference, int message, boolean recreate) {
+            this.options = options;
+            this.preference = preference;
+            this.message = message;
+            this.recreate = recreate;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int i) {
+            new Preferences(context).storeData(preference, options[i]); // Stores pressed value as preference
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show(); // Displays the success message
+            dialog.dismiss(); // Closes the current dialog
+
+            if (recreate) ((Activity) context).recreate(); // If "recreate" is true, recreates the screen with the selected font
+        }
+    }
+
     public class dialogClick implements DialogInterface.OnClickListener {
         String indicator;
 
@@ -66,38 +98,7 @@ public class DialogMenus {
         }
     }
 
-    public class singleChoiceMenuClick implements DialogInterface.OnClickListener {
-        Preferences preferences = new Preferences(context);
-
-        String[] options;
-        String menuName;
-
-        public singleChoiceMenuClick(String[] options, String menuName) {
-            this.options = options;
-            this.menuName = menuName; // Used to indicate which menu is being called
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int i) {
-            switch (menuName) {
-                case "fontMenu": // Click action for font choice menu
-                    preferences.storeData("userFont", options[i]); // Stores the new font selected in preferences
-                    Toast.makeText(context, R.string.changed_font, Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                    ((Activity) context).recreate();
-                    break;
-                case "dateTimeMenu": // Click action for date and time format choice menu
-                    preferences.storeData("dateTimeFormat", options[i]); // Stores the new date and time format in preferences
-                    Toast.makeText(context, R.string.changed_date_time_format, Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    public class dismissDialog implements View.OnClickListener {
+    public static class dismissDialog implements View.OnClickListener {
         Dialog dialog;
 
         public dismissDialog(Dialog dialog) {

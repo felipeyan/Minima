@@ -26,10 +26,16 @@
     <string name="search_note">Pesquisar nota…</string>
     <string-array name="settings">
         <item>Configurar senha de PIN</item>
+        <item>Configurar tamanho da fonte</item>
         <item>Mudar fonte do aplicativo</item>
         <item>Exportar todas as notas em TXT</item>
         <item>Alterar o tipo de formato de data e hora</item>
         <item>Apagar todo o banco de dados</item>
+    </string-array>
+    <string-array name="font_size">
+        <item>Pequena</item>
+        <item>Média</item>
+        <item>Grande</item>
     </string-array>
     <string name="storage_permission">A exportação de arquivos necessita da permissão de armazenamento, ative-a nas permissões desse aplicativo</string>
     <string name="error_exporting_file">Um erro ocorreu ao exportar o arquivo</string>
@@ -50,4 +56,6 @@
     <string name="changed_date_time_format">Formato de data e hora alterado</string>
     <string name="remove_pass">Você tem certeza que quer remover sua senha?</string>
     <string name="removed_pass">Sua senha foi removida com sucesso</string>
+    <string name="choose_font_size">Escolher tamanho da fonte</string>
+    <string name="changed_font_size">Tamanho da fonte alterada com sucesso</string>
 </resources>
