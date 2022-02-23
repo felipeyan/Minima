@@ -24,11 +24,19 @@ public class Export {
 
     public Intent exportAsTXT() {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/plain");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.putExtra(Intent.EXTRA_TITLE, fileName());
 
         return intent;
+    }
+
+    public void shareText(String note) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, encryption.decryptNote(context, note));
+        context.startActivity(Intent.createChooser(intent, null));
     }
 
     public String fileName() { // Returns the filename based on the current date and time in String format

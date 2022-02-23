@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -34,6 +35,13 @@ public class DialogMenus {
             setSingleChoiceItems(items, checkedItem, dialogClick);
             show();
         }
+    }
+
+    public void popupMenu(View view, int menuRes, PopupMenu.OnMenuItemClickListener listener) {
+        PopupMenu menu = new PopupMenu(context, view);
+        menu.getMenuInflater().inflate(menuRes, menu.getMenu());
+        menu.setOnMenuItemClickListener(listener);
+        menu.show();
     }
 
     public void singleChoiceMenu(int options, int dialogTitle, String preference, int message, boolean recreate) {

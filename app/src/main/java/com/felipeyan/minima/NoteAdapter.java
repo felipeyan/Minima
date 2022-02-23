@@ -23,6 +23,9 @@ import java.util.Collection;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> implements Filterable {
     Database database;
+    Export export;
+    Preferences preferences;
+    DialogMenus dialogMenus;
     Encryption encryption = new Encryption();
 
     Context context;
@@ -30,6 +33,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
 
     public NoteAdapter(Context context, ArrayList<String> noteIDS, ArrayList<String> noteTEXTS, ArrayList<String> noteMOD) {
         this.database = new Database(context);
+        this.export = new Export(context);
+        this.preferences = new Preferences(context);
+        this.dialogMenus = new DialogMenus(context);
+
         this.context = context;
         this.noteIDS = noteIDS; // IDs received from main activity
         this.noteTEXTS = noteTEXTS; // Encrypted notes received from main activity
@@ -59,26 +66,35 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         // Displays formatted date and time
         holder.dateTime.setText(new Preferences(context).dateTimeDisplay(noteMOD.get(position)));
 
-        // Starts the note activity with the values of the clicked note
-        holder.layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) { // Transfers information from the clicked note to the note view activity
-                Intent intent = new Intent(context, NoteActivity.class);
-                intent.putExtra("selectedID", noteIDS.get(holder.getAdapterPosition()));
-                intent.putExtra("selectedNote", decryptedNote);
-                intent.putExtra("selectedLastModification", noteMOD.get(holder.getAdapterPosition()));
-                context.startActivity(intent); // Starts note activity
-            }
-        });
+        holder.layout.setOnClickListener(noteClick(holder, decryptedNote));
+        holder.layout.setOnLongClickListener(noteLongClick(holder));
+    }
 
-        // Shows the note menu when the note is long-clicked
-        holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
+    // Shows the note menu when the note is long-clicked
+    public View.OnLongClickListener noteLongClick(@NonNull NoteAdapter.ViewHolder holder) {
+        return new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 openMenu(view, holder.getAdapterPosition());
                 return true;
             }
-        });
+        };
+    }
+
+    // Starts the note activity with the values of the clicked note
+    public View.OnClickListener noteClick(@NonNull NoteAdapter.ViewHolder holder, String note) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Transfers information from the clicked note to the note view activity
+                Intent intent = new Intent(context, NoteActivity.class);
+
+                new Preferences(context).storeExtra(intent,
+                        new String[] { "selectedID", "selectedNote", "selectedLastModification" },
+                        new String[] { noteIDS.get(holder.getAdapterPosition()), note, noteMOD.get(holder.getAdapterPosition()) }
+                );
+            }
+        };
     }
 
     @Override
@@ -87,10 +103,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     }
 
     public void openMenu(View view, int position) { // Menu when the note is long clicked
-        PopupMenu menu = new PopupMenu(context, view);
-        menu.getMenuInflater().inflate(R.menu.note_menu, menu.getMenu());
-        menu.setOnMenuItemClickListener(new noteMenu(position));
-        menu.show(); // Display the menu
+        dialogMenus.popupMenu(view, R.menu.note_menu, new noteMenu(position));
     }
 
     @Override
@@ -169,11 +182,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
                 }
                 return true;
             } else if (menuTitle.equals(menuOptions[2])) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_TEXT, encryption.decryptNote(context, noteTEXTS.get(position))); // Decrypts and stores the selected note
-                intent.setType("text/plain");
-                context.startActivity(Intent.createChooser(intent, null));
+                export.shareText(noteTEXTS.get(position));
                 return true;
             } else {
                 return false;

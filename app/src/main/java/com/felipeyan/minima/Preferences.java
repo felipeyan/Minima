@@ -1,6 +1,7 @@
 package com.felipeyan.minima;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.View;
 
@@ -9,6 +10,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.res.ResourcesCompat;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -22,6 +24,14 @@ public class Preferences {
     public Preferences(Context context) {
         this.context = context;
         preferences = context.getSharedPreferences("userPref", MODE_PRIVATE);
+    }
+
+    protected void storeExtra(Intent intent, String[] key, String[] value) {
+        for (int i = 0; i < key.length; i++) {
+            intent.putExtra(key[i], value[i]);
+        }
+
+        context.startActivity(intent);
     }
 
     protected String getData(String preference) {

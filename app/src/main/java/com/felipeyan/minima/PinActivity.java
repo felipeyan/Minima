@@ -1,20 +1,15 @@
 package com.felipeyan.minima;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
 
@@ -93,25 +88,6 @@ public class PinActivity extends AppCompatActivity {
             } catch (Exception e) { // Display the error message
                 Toast.makeText(PinActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
             }
-        }
-    }
-
-    public static class PinButton extends AppCompatButton {
-        public PinButton(@NonNull Context context) {
-            super(context);
-        }
-
-        public PinButton(@NonNull Context context, @Nullable AttributeSet attrs) {
-            super(context, attrs);
-        }
-
-        public PinButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-            super(context, attrs, defStyleAttr);
-        }
-
-        @Override
-        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            super.onMeasure(widthMeasureSpec, widthMeasureSpec);
         }
     }
 

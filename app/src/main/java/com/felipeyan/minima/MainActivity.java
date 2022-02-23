@@ -25,6 +25,7 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
     Database database = new Database(this);
     Preferences preferences;
+    DialogMenus dialogMenus;
 
     ArrayList<String> noteIDS, noteTEXTS, noteMOD;
     AppCompatTextView mainTitle, orderText;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         preferences = new Preferences(this);
+        dialogMenus = new DialogMenus(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -77,10 +79,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openMenu(View view) { // Displays the menu after clicking the 3-dot icon
-        PopupMenu menu = new PopupMenu(this, view);
-        menu.getMenuInflater().inflate(R.menu.main_menu, menu.getMenu());
-        menu.setOnMenuItemClickListener(new menuClick(getApplicationContext()));
-        menu.show();
+        dialogMenus.popupMenu(view, R.menu.main_menu, new menuClick(getApplicationContext()));
     }
 
     public void changeOrder(View view) { // Action that changes the order of the note list
@@ -158,9 +157,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean toggleSearchView() { // Hides the other Toolbar Views and displays the SearchView
-        findViewById(R.id.mainTitle).setVisibility(findViewById(R.id.mainTitle).getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE); // Toolbar title
-        findViewById(R.id.mainTools).setVisibility(findViewById(R.id.mainTools).getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE); // Toolbar buttons
-        findViewById(R.id.mainSV).setVisibility(findViewById(R.id.mainSV).getVisibility() == View.GONE ? View.VISIBLE : View.GONE); // Toolbar SearchView
+        changeViewVisibility(findViewById(R.id.mainTitle), false); // Toolbar title
+        changeViewVisibility(findViewById(R.id.mainTools), false); // Toolbar buttons
+        changeViewVisibility(findViewById(R.id.mainSV), true); // Toolbar SearchView
         searchView.setIconified(false); // Shows the search bar instead of the default icon
 
         if (searchView.getVisibility() == View.GONE) { // If SearchView is hidden, also hide the keyboard
@@ -169,6 +168,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    public void changeViewVisibility(View view, boolean reverse) {
+        view.setVisibility(!reverse ? view.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE : view.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
     }
 
     public void styleSearch() {
