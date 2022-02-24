@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> noteIDS, noteTEXTS, noteMOD;
     AppCompatTextView mainTitle, orderText;
     AppCompatImageView orderIcon;
-    NoteAdapter noteAdapter;
+    Adapter adapter;
     RecyclerView recyclerView;
     SearchView searchView;
 
@@ -66,13 +66,14 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                noteAdapter.getFilter().filter(query); // Search the note when the keyboard search icon is pressed
+                adapter.getFilter().filter(query);
+                // noteAdapter.getFilter().filter(query); // Search the note when the keyboard search icon is pressed
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                noteAdapter.getFilter().filter(newText); // Search the note when text is modified
+                // noteAdapter.getFilter().filter(newText); // Search the note when text is modified
                 return false;
             }
         });
@@ -129,8 +130,13 @@ public class MainActivity extends AppCompatActivity {
         noteTEXTS = database.getAllData("note", order); // Collect all note texts
         noteMOD = database.getAllData("mod_date", order); // Collects all last modified dates
 
-        noteAdapter = new NoteAdapter(this, noteIDS, noteTEXTS, noteMOD);
-        recyclerView.setAdapter(noteAdapter);
+        ArrayList<ArrayList<String>> arrays = new ArrayList<>();
+        arrays.add(noteIDS);
+        arrays.add(noteTEXTS);
+        arrays.add(noteMOD);
+
+        adapter = new Adapter(this, "notes", arrays);
+        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
