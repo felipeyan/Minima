@@ -11,6 +11,8 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 public class Encryption {
+    UserPreferences preferences;
+
     String AES = "AES";
 
     protected String encrypt(String data, String password) throws Exception {
@@ -34,7 +36,8 @@ public class Encryption {
 
     protected String decryptNote(Context context, String note) {
         try { // Decrypts the note using the stored password
-            note = decrypt(note, new Preferences(context).getEncryptedData("userPw", false));
+            preferences = new UserPreferences(context);
+            note = decrypt(note, preferences.getEncryptedPreference(preferences.APP_PASSWORD, false));
         } catch (Exception e) {
             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
         }

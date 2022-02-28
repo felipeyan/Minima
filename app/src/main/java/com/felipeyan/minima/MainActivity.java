@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 
@@ -19,15 +18,12 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 public class MainActivity extends AppCompatActivity {
-    Database database = new Database(this);
-    Preferences preferences;
+    Database database;
     DialogMenus dialogMenus;
+    UserPreferences preferences;
+    ViewStyler viewStyler;
 
-    ArrayList<String> noteIDS, noteTEXTS, noteMOD;
     AppCompatTextView mainTitle, orderText;
     AppCompatImageView orderIcon;
     Adapter adapter;
@@ -36,8 +32,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        preferences = new Preferences(this);
+        database = new Database(this);
         dialogMenus = new DialogMenus(this);
+        preferences = new UserPreferences(this);
+        viewStyler = new ViewStyler(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -53,91 +51,73 @@ public class MainActivity extends AppCompatActivity {
         orderText = findViewById(R.id.orderText);
         orderIcon = findViewById(R.id.orderIcon);
 
-        preferences.changeAppFont(); // Changes the Activity text font to the stored value
-        preferences.changeViewFont(mainTitle, orderText); // Changes toolbar title and listing order indication text font
-        preferences.changeOrderIcon(orderIcon); // Changes the listing order indication icon based on user preference
+        viewStyler.changeAppFont(); // Changes the Activity text font to the stored value
+        viewStyler.changeViewFont(mainTitle, orderText); // Changes toolbar title and listing order indication text font
+        viewStyler.changeOrderIcon(orderIcon); // Changes the listing order indication icon based on user preference
 
         styleSearch(); // Stylize SearchView
-        verifyPassword(); // Calls the function that checks the stored password
-        listNotes(preferences.getData("listOrder")); // Calls the RecyclerView creation function
+        listNotes(); // Calls the RecyclerView creation function
 
         searchView.setOnCloseListener(this::toggleSearchView); // When the close search button is pressed
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                adapter.getFilter().filter(query);
-                // noteAdapter.getFilter().filter(query); // Search the note when the keyboard search icon is pressed
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // noteAdapter.getFilter().filter(newText); // Search the note when text is modified
+                adapter.getFilter().filter(newText);
                 return false;
             }
         });
     }
 
     public void openMenu(View view) { // Displays the menu after clicking the 3-dot icon
-        dialogMenus.popupMenu(view, R.menu.main_menu, new menuClick(getApplicationContext()));
+        dialogMenus.popupMenu(view, R.menu.main_menu, menuClick());
     }
 
     public void changeOrder(View view) { // Action that changes the order of the note list
         // Checks the value stored in preferences
-        switch (preferences.getData("listOrder")) {
+        switch (preferences.getListOrder()) {
             case "DESC": default: // If the value is DESC (system default)
-                preferences.storeData("listOrder", "ASC"); // Stores the new value (ASC)
+                preferences.storePreference(preferences.LIST_ORDER, "ASC"); // Stores the new value (ASC)
                 Toast.makeText(this, R.string.list_order_asc, Toast.LENGTH_SHORT).show(); // Display the modification message
-                listNotes("ASC"); // Recreates RecyclerView with the new display order (ascending)
                 break;
             case "ASC": // If the value is ASC
-                preferences.storeData("listOrder", "DESC"); // Stores the new value (DESC)
+                preferences.storePreference(preferences.LIST_ORDER, "DESC"); // Stores the new value (DESC)
                 Toast.makeText(this, R.string.list_order_desc, Toast.LENGTH_SHORT).show(); // Display the modification message
-                listNotes("DESC"); // Recreates RecyclerView with the new display order (descending)
                 break;
         }
 
-        preferences.changeOrderIcon(orderIcon); // Displays the icon corresponding to the option
+        listNotes();
+        viewStyler.changeOrderIcon(orderIcon); // Displays the icon corresponding to the option
     }
 
-    public static class menuClick implements PopupMenu.OnMenuItemClickListener {
-        Context context;
+    public PopupMenu.OnMenuItemClickListener menuClick() {
+        return new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                String menuTitle = item.getTitle().toString();
+                String[] menuOptions = getResources().getStringArray(R.array.main);
 
-        public menuClick(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            String menuTitle = item.getTitle().toString();
-
-            if (menuTitle.equals(context.getString(R.string.menu_settings))) {
-                MainActivity.openSettings(context);
-                return true;
-            } else if (menuTitle.equals(context.getString(R.string.menu_about))) {
-                MainActivity.openAbout(context);
-                return true;
-            } else {
-                return false;
+                if (menuTitle.equals(menuOptions[0])) {
+                    openSettings(MainActivity.this);
+                    return true;
+                } else if (menuTitle.equals(menuOptions[1])) {
+                    openAbout(MainActivity.this);
+                    return true;
+                } else {
+                    return false;
+                }
             }
-        }
+        };
     }
 
-    public void listNotes(String order) { // Creates the RecyclerView that displays the notes saved in the database
-        // The string "order" indicates the order of values to the database (ASC = ascending, DESC = descending)
-        noteIDS = database.getAllData("id", order); // Collects all note IDS
-        noteTEXTS = database.getAllData("note", order); // Collect all note texts
-        noteMOD = database.getAllData("mod_date", order); // Collects all last modified dates
-
-        ArrayList<ArrayList<String>> arrays = new ArrayList<>();
-        arrays.add(noteIDS);
-        arrays.add(noteTEXTS);
-        arrays.add(noteMOD);
-
-        adapter = new Adapter(this, "notes", arrays);
+    public void listNotes() { // Creates the RecyclerView that displays the notes saved in the database
+        new Data(this);
+        adapter = new Adapter(this, "notes");
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     public void addNote(View view) { // Launches the "Note" screen
@@ -152,20 +132,10 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(context, R.string.menu_about, Toast.LENGTH_SHORT).show();
     }
 
-    public void verifyPassword() { // Check if you have a password for note encryption, if not, create and store a new one
-        if (preferences.getData("userPw").isEmpty()) {
-            try {
-                preferences.storeEncryptedData("userPw", UUID.randomUUID().toString().replaceAll("-", "").substring(0, 11));
-            } catch (Exception e) {
-                Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     public boolean toggleSearchView() { // Hides the other Toolbar Views and displays the SearchView
-        changeViewVisibility(findViewById(R.id.mainTitle), false); // Toolbar title
-        changeViewVisibility(findViewById(R.id.mainTools), false); // Toolbar buttons
-        changeViewVisibility(findViewById(R.id.mainSV), true); // Toolbar SearchView
+        viewStyler.changeViewVisibility(findViewById(R.id.mainTitle), false); // Toolbar title
+        viewStyler.changeViewVisibility(findViewById(R.id.mainTools), false); // Toolbar buttons
+        viewStyler.changeViewVisibility(findViewById(R.id.mainSV), true); // Toolbar SearchView
         searchView.setIconified(false); // Shows the search bar instead of the default icon
 
         if (searchView.getVisibility() == View.GONE) { // If SearchView is hidden, also hide the keyboard
@@ -174,10 +144,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return true;
-    }
-
-    public void changeViewVisibility(View view, boolean reverse) {
-        view.setVisibility(!reverse ? view.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE : view.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
     }
 
     public void styleSearch() {

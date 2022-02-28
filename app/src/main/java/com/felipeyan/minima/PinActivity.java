@@ -16,7 +16,8 @@ import android.widget.Toast;
 import java.util.Objects;
 
 public class PinActivity extends AppCompatActivity {
-    Preferences preferences;
+    UserPreferences preferences;
+    ViewStyler viewStyler;
 
     AppCompatTextView pinTitle;
     AppCompatEditText pinInput;
@@ -27,14 +28,15 @@ public class PinActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin);
 
-        preferences = new Preferences(this);
+        preferences = new UserPreferences(this);
+        viewStyler = new ViewStyler(this);
 
         pinTitle = findViewById(R.id.pinTitle);
         pinInput = findViewById(R.id.pinInput);
         pinBackspace = findViewById(R.id.pinBackspace);
-        pinBackspace.setOnClickListener(new deleteNumber()); // Backspace click
-        pinBackspace.setOnLongClickListener(new deleteAllNumbers()); // Backspace long click
-        pinInput.addTextChangedListener(new pinText()); // When PIN input text is modified
+        pinBackspace.setOnClickListener(deleteNumber()); // Backspace click
+        pinBackspace.setOnLongClickListener(deleteAllNumbers()); // Backspace long click
+        pinInput.addTextChangedListener(pinText()); // When PIN input text is modified
     }
 
     @Override
@@ -42,12 +44,9 @@ public class PinActivity extends AppCompatActivity {
         super.onStart();
 
         // If a PIN password exists, go to PinActivity
-        if (preferences.getData("userPIN").isEmpty()) {
-            startActivity(new Intent(this, MainActivity.class));
-        }
-
-        preferences.changeAppFont(); // Changes the Activity text font to the stored value
-        preferences.changeViewFont(pinTitle); // Changes toolbar title font
+        if (preferences.getAppPIN().isEmpty()) startActivity(new Intent(this, MainActivity.class));
+        viewStyler.changeAppFont(); // Changes the Activity text font to the stored value
+        viewStyler.changeViewFont(pinTitle); // Changes toolbar title font
     }
 
     public void insertNumber(View view) { // Applied via the onClick property in pinNumber (values/themes.xml)
@@ -55,40 +54,50 @@ public class PinActivity extends AppCompatActivity {
         pinInput.append(button.getText().toString()); // Adds View text to PIN input
     }
 
-    public class deleteNumber implements View.OnClickListener { // Backspace
-        @Override
-        public void onClick(View view) {
-            if (!pinInput.getText().toString().isEmpty()) { // If PIN input is not empty, delete the last character
-                pinInput.setText(Objects.requireNonNull(pinInput.getText()).toString().substring(0, pinInput.length() - 1));
-            }
-        }
-    }
-
-    public class deleteAllNumbers implements View.OnLongClickListener {
-        @Override
-        public boolean onLongClick(View view) {
-            pinInput.setText("");
-            return true;
-        }
-    }
-
-    private class pinText implements TextWatcher {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-        @Override
-        public void afterTextChanged(Editable s) { }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            try { // Check if the input text is the same as the stored PIN
-                if (s.toString().equals(preferences.getEncryptedData("userPIN", true))) {
-                    startActivity(new Intent(PinActivity.this, MainActivity.class)); // If it is the same, close this activity
+    public View.OnClickListener deleteNumber() { // Backspace
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!pinInput.getText().toString().isEmpty()) { // If PIN input is not empty, delete the last character
+                    pinInput.setText(Objects.requireNonNull(pinInput.getText()).toString().substring(0, pinInput.length() - 1));
                 }
-            } catch (Exception e) { // Display the error message
-                Toast.makeText(PinActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
             }
-        }
+        };
+    }
+
+    public View.OnLongClickListener deleteAllNumbers() {
+        return new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                pinInput.setText("");
+                return true;
+            }
+        };
+    }
+
+    private TextWatcher pinText() {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+                try { // Check if the input text is the same as the stored PIN
+                    if (s.toString().equals(preferences.getEncryptedPreference(preferences.APP_PIN, true))) {
+                        startActivity(new Intent(PinActivity.this, MainActivity.class)); // If it is the same, close this activity
+                    }
+                } catch (Exception e) { // Display the error message
+                    Toast.makeText(PinActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        };
     }
 
     @Override

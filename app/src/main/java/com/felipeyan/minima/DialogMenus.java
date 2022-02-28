@@ -1,121 +1,91 @@
 package com.felipeyan.minima;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-
 public class DialogMenus {
+    UserPreferences preferences;
+
     Context context;
 
     public DialogMenus(Context context) {
+        preferences = new UserPreferences(context);
         this.context = context;
     }
 
-    public class dialogBuilder extends AlertDialog.Builder {
-        public dialogBuilder(int message, DialogInterface.OnClickListener... buttons) {
-            super(context);
+    public AlertDialog.Builder alertBuilder(int message, DialogInterface.OnClickListener... clickListeners) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(message).setCancelable(true).setPositiveButton(R.string.yes, clickListeners[0]);
+        if (clickListeners.length > 1) builder.setNegativeButton(R.string.no, clickListeners[1]);
+        builder.show();
 
-            setMessage(message);
-            setCancelable(true);
-            setPositiveButton(R.string.yes, buttons[0]);
-            setNegativeButton(R.string.no, buttons.length > 1 ? buttons[1] : new dialogClick(""));
-            show();
-        }
-
-        public dialogBuilder(int title, String[] items, int checkedItem, DialogInterface.OnClickListener dialogClick) {
-            super(context, R.style.dialogStyle);
-
-            setTitle(title);
-            setSingleChoiceItems(items, checkedItem, dialogClick);
-            show();
-        }
+        return builder;
     }
 
-    public void popupMenu(View view, int menuRes, PopupMenu.OnMenuItemClickListener listener) {
+    public AlertDialog.Builder alertBuilder(boolean cancelable, int message, DialogInterface.OnClickListener... clickListeners) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(message).setCancelable(cancelable).setPositiveButton(R.string.yes, clickListeners[0]);
+        if (clickListeners.length > 1) builder.setNegativeButton(R.string.no, clickListeners[1]);
+        builder.show();
+
+        return builder;
+    }
+
+    public PopupMenu popupMenu(View view, int menuRes, PopupMenu.OnMenuItemClickListener clickListener) {
         PopupMenu menu = new PopupMenu(context, view);
         menu.getMenuInflater().inflate(menuRes, menu.getMenu());
-        menu.setOnMenuItemClickListener(listener);
+        menu.setOnMenuItemClickListener(clickListener);
         menu.show();
+
+        return menu;
     }
 
-    public void singleChoiceMenu(int options, int dialogTitle, String preference, int message, boolean recreate) {
-        String[] optionsList = context.getResources().getStringArray(options);
+    public AlertDialog preferenceSingleChoiceMenu(String preference, int arrayId, int title, int message, boolean recreateActivity) {
+        String[] items = context.getResources().getStringArray(arrayId);
+        int checkedItem = preferences.getStringArrayIndex(preference);
 
-        new dialogBuilder(dialogTitle,
-                context.getResources().getStringArray(options),
-                new Preferences(context).getStringArrayIndex(optionsList, preference),
-                new singleChoiceMenuClick(optionsList, preference, message, recreate));
+        return new AlertDialog.Builder(context)
+            .setTitle(title)
+            .setSingleChoiceItems(items, checkedItem, preferenceClick(preference, items, message, recreateActivity))
+            .show();
     }
 
-    public class singleChoiceMenuClick implements DialogInterface.OnClickListener {
-        String[] options; // List of options in dialog box
-        String preference; // Preference name to be stored
-        int message; // Message to be displayed
-        boolean recreate; // If it's necessary to recreate the current screen
+    public DialogInterface.OnClickListener preferenceClick(String preference, String[] items, int message, boolean recreateActivity) {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                preferences.storePreference(preference, items[i]);
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
 
-        public singleChoiceMenuClick(String[] options, String preference, int message, boolean recreate) {
-            this.options = options;
-            this.preference = preference;
-            this.message = message;
-            this.recreate = recreate;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int i) {
-            new Preferences(context).storeData(preference, options[i]); // Stores pressed value as preference
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show(); // Displays the success message
-            dialog.dismiss(); // Closes the current dialog
-
-            if (recreate) ((Activity) context).recreate(); // If "recreate" is true, recreates the screen with the selected font
-        }
-    }
-
-    public class dialogClick implements DialogInterface.OnClickListener {
-        String indicator;
-
-        public dialogClick(String indicator) {
-            this.indicator = indicator;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int i) {
-            switch (indicator) {
-                case "removePassPositive":
-                    new Preferences(context).removeData("userPIN");
-                    Toast.makeText(context, R.string.removed_pass, Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                    break;
-                case "deleteDBPositive":
-                    new Database(context).deleteDatabase();
-                    Toast.makeText(context, R.string.database_deleted, Toast.LENGTH_SHORT).show();
-                    break;
-                case "finish":
-                    dialog.dismiss();
-                    ((Activity) context).finish();
-                    break;
-                default:
-                    dialog.dismiss();
-                    break;
+                if (recreateActivity) ((Activity) context).recreate();
             }
-        }
+        };
     }
 
-    public static class dismissDialog implements View.OnClickListener {
-        Dialog dialog;
+    public Dialog customLayoutDialog(int layout, boolean cancelable) {
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(layout);
+        dialog.getWindow().setBackgroundDrawable(null);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        dialog.setCancelable(cancelable);
 
-        public dismissDialog(Dialog dialog) {
-            this.dialog = dialog; // Receive the dialog
-        }
+        return dialog;
+    }
 
-        @Override
-        public void onClick(View v) {
-            dialog.dismiss(); // Closes the dialog
-        }
+    public View.OnClickListener dismissDialog(Dialog dialog) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        };
     }
 }

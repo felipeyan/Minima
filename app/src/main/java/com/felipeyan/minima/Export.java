@@ -12,6 +12,7 @@ import java.util.Locale;
 
 public class Export {
     Encryption encryption = new Encryption();
+
     Context context;
 
     public Export(Context context) {

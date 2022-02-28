@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Minima</string>
-    <string name="menu_settings">Configurações</string>
-    <string name="menu_about">Sobre</string>
     <string name="in_dev">Em desenvolvimento…</string>
     <string name="start_typing">Comece a digitar sua nota aqui…</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
+    <string name="menu_settings">Configurações</string>
+    <string name="menu_about">Sobre</string>
+    <string name="menu_delete">Excluir</string>
+    <string name="menu_duplicate">Duplicar</string>
+    <string name="menu_share">Compartilhar</string>
     <string name="empty_note">A nota não pode estar vazia</string>
     <string name="duplicated_note">Nota duplicada com sucesso</string>
     <string name="deleted_note">Nota apagada com sucesso</string>
@@ -19,23 +22,29 @@
     <string name="error_saving">Um erro ocorreu enquanto salvava a nota…</string>
     <string name="error_deleting">Um erro ocorreu enquanto apagava a nota…</string>
     <string name="error_duplicating">Um erro ocorreu enquanto duplicava a nota…</string>
-    <string name="menu_delete">Excluir</string>
-    <string name="menu_duplicate">Duplicar</string>
-    <string name="menu_share">Compartilhar</string>
     <string name="menu_save">Salvar no armazenamento</string>
     <string name="search_note">Pesquisar nota…</string>
+    <string-array name="main">
+        <item>Configurações</item>
+        <item>Sobre</item>
+    </string-array>
     <string-array name="settings">
         <item>Configurar senha de PIN</item>
         <item>Configurar tamanho da fonte</item>
         <item>Mudar fonte do aplicativo</item>
-        <item>Exportar todas as notas em TXT</item>
         <item>Alterar o tipo de formato de data e hora</item>
+        <item>Exportar todas as notas em TXT</item>
         <item>Apagar todo o banco de dados</item>
     </string-array>
     <string-array name="font_size">
         <item>Pequena</item>
         <item>Média</item>
         <item>Grande</item>
+    </string-array>
+    <string-array name="note_options">
+        <item>Excluir</item>
+        <item>Duplicar</item>
+        <item>Compartilhar</item>
     </string-array>
     <string name="storage_permission">A exportação de arquivos necessita da permissão de armazenamento, ative-a nas permissões desse aplicativo</string>
     <string name="error_exporting_file">Um erro ocorreu ao exportar o arquivo</string>

@@ -3,7 +3,6 @@ package com.felipeyan.minima;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,9 +17,11 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class NoteActivity extends AppCompatActivity {
-    Encryption encryption = new Encryption();
-    Database database = new Database(this);
-    Preferences preferences;
+    Database database;
+    DialogMenus dialogMenus;
+    Encryption encryption;
+    UserPreferences preferences;
+    ViewStyler viewStyler;
 
     Context context;
     AppCompatEditText noteField;
@@ -30,7 +31,11 @@ public class NoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
 
-        preferences = new Preferences(this);
+        database = new Database(this);
+        encryption = new Encryption();
+        dialogMenus = new DialogMenus(this);
+        preferences = new UserPreferences(this);
+        viewStyler = new ViewStyler(this);
 
         context = this;
         noteField = findViewById(R.id.noteField);
@@ -40,9 +45,9 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        preferences.changeAppFont(); // Changes the Activity text font to the stored value
-        preferences.changeViewFont(noteField); // Changes note field font
-        noteField.setTextSize(TypedValue.COMPLEX_UNIT_SP, preferences.getFontSize());
+        viewStyler.changeAppFont(); // Changes the Activity text font to the stored value
+        viewStyler.changeViewFont(noteField); // Changes note field font
+        noteField.setTextSize(TypedValue.COMPLEX_UNIT_SP, preferences.fontSizeToSP());
     }
 
     public void receivedData() {
@@ -78,33 +83,28 @@ public class NoteActivity extends AppCompatActivity {
         }
     }
 
-    public void changeDialog() { // Open a dialog asking if you want to save changes
-        new AlertDialog.Builder(this)
-            .setMessage(R.string.save_changes)
-            .setCancelable(true)
-            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // Update the new value in the database
-                    if (database.updateData(getIntent().getStringExtra("selectedID"), encryptedNote(noteField.getText().toString()))) {
-                        Toast.makeText(context, R.string.updated_note, Toast.LENGTH_SHORT).show(); // Display a success message
-                        finish();
-                    } else {
-                        Toast.makeText(context, R.string.error_updating, Toast.LENGTH_SHORT).show(); // Display a error message
-                    }
-                }
-            })
-            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+    public void changeDialog() {
+        dialogMenus.alertBuilder(false, R.string.save_changes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (database.updateData(getIntent().getStringExtra("selectedID"), encryptedNote(noteField.getText().toString()))) {
+                    Toast.makeText(context, R.string.updated_note, Toast.LENGTH_SHORT).show();
                     finish();
+                } else {
+                    Toast.makeText(context, R.string.error_updating, Toast.LENGTH_SHORT).show();
                 }
-            }).show();
+            }
+        }, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
+            }
+        });
     }
 
     protected String encryptedNote(String note) { // Returns received text encrypted with stored password
         try {
-            note = encryption.encrypt(note, preferences.getEncryptedData("userPw", false));
+            note = encryption.encrypt(note, preferences.getEncryptedPreference(preferences.APP_PASSWORD, false));
         } catch (Exception e) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show(); // Display a error message
         }

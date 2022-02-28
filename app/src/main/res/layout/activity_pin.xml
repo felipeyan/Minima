@@ -46,28 +46,28 @@
             android:weightSum="4">
 
             <GridLayout style="@style/pinContainer">
-                <view class="com.felipeyan.minima.CircleButton" android:text="1" style="@style/pinNumber"/>
-                <view class="com.felipeyan.minima.CircleButton" android:text="2" style="@style/pinNumber"/>
-                <view class="com.felipeyan.minima.CircleButton" android:text="3" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.ViewStyler$CircleButton" android:text="1" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.ViewStyler$CircleButton" android:text="2" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.ViewStyler$CircleButton" android:text="3" style="@style/pinNumber"/>
             </GridLayout>
             <GridLayout style="@style/pinContainer">
-                <view class="com.felipeyan.minima.CircleButton" android:text="4" style="@style/pinNumber"/>
-                <view class="com.felipeyan.minima.CircleButton" android:text="5" style="@style/pinNumber"/>
-                <view class="com.felipeyan.minima.CircleButton" android:text="6" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.ViewStyler$CircleButton" android:text="4" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.ViewStyler$CircleButton" android:text="5" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.ViewStyler$CircleButton" android:text="6" style="@style/pinNumber"/>
             </GridLayout>
             <GridLayout style="@style/pinContainer">
-                <view class="com.felipeyan.minima.CircleButton" android:text="7" style="@style/pinNumber"/>
-                <view class="com.felipeyan.minima.CircleButton" android:text="8" style="@style/pinNumber"/>
-                <view class="com.felipeyan.minima.CircleButton" android:text="9" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.ViewStyler$CircleButton" android:text="7" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.ViewStyler$CircleButton" android:text="8" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.ViewStyler$CircleButton" android:text="9" style="@style/pinNumber"/>
             </GridLayout>
             <GridLayout style="@style/pinContainer">
-                <view class="com.felipeyan.minima.CircleButton"
+                <view class="com.felipeyan.minima.ViewStyler$CircleButton"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:background="@android:color/transparent"/>
-                <view class="com.felipeyan.minima.CircleButton" android:text="0" style="@style/pinNumber"/>
+                <view class="com.felipeyan.minima.ViewStyler$CircleButton" android:text="0" style="@style/pinNumber"/>
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/pinBackspace"
                     android:layout_width="0dp"
