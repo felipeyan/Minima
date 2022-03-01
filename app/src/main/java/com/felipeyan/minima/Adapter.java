@@ -1,6 +1,5 @@
 package com.felipeyan.minima;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.TypedValue;
@@ -25,21 +24,21 @@ import java.util.Objects;
 public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Filterable {
     public static final String NOTES_RV = "notes";
     public static final String SETTINGS_RV = "settings";
+    public static final String PAGES_RV = "pages";
 
     Data data;
     Database database;
     DialogMenus dialogMenus;
     Encryption encryption;
     Export export;
+    Pages pages;
     UserPreferences preferences;
     ViewStyler viewStyler;
 
     Context context;
     String origin;
-    ArrayList<String> dataForFilter;
 
     public Adapter(Context context, String origin) {
-        this.data = new Data(context);
         this.database = new Database(context);
         this.encryption = new Encryption();
         this.export = new Export(context);
@@ -52,7 +51,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
 
         switch (origin) {
             case NOTES_RV:
-                this.dataForFilter = new ArrayList<>(data.noteTexts);
+                this.data = ((MainActivity) context).pages.data;
+                break;
+            case PAGES_RV:
+                this.pages = ((MainActivity) context).pages;
                 break;
         }
     }
@@ -69,6 +71,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
                 break;
             case SETTINGS_RV:
                 view = inflater.inflate(R.layout.item_option, parent, false);
+                break;
+            case PAGES_RV:
+                view = inflater.inflate(R.layout.item_page, parent, false);
                 break;
         }
 
@@ -100,6 +105,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
                 optionText.setText(options[position]);
                 optionCard.setOnClickListener(((SettingsActivity) context).settingsItemClick(position));
                 break;
+            case PAGES_RV:
+                ViewStyler.CircleButton pageButton = holder.itemView.findViewById(R.id.pageButton);
+                pageButton.setText(String.valueOf(position + 1));
+                pageButton.setOnClickListener(pages.pageClick(position));
+                break;
         }
     }
 
@@ -114,6 +124,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
             case SETTINGS_RV:
                 itemCount = ((SettingsActivity) context).getSettings().length;
                 break;
+            case PAGES_RV:
+                itemCount = pages.getPagesCount();
+                break;
         }
 
         return itemCount;
@@ -127,12 +140,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
     Filter dataFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
+            pages.data.setDataRange(0, pages.data.getDataCount());
+
             ArrayList<String> filteredData = new ArrayList<>();
 
             if (charSequence.toString().isEmpty()) {
-                filteredData.addAll(dataForFilter);
+                filteredData.addAll(data.noteTexts);
             } else {
-                for (String note : dataForFilter) {
+                for (String note : data.noteTexts) {
                     if (encryption.decryptNote(context, note).toLowerCase().contains(charSequence.toString().toLowerCase())) {
                         filteredData.add(note);
                     }
@@ -195,7 +210,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
                 if (itemTitle.equals(menuOptions[0])) {
                     if (database.deleteData(data.noteIds.get(position)) != 0) {
                         Toast.makeText(context, R.string.deleted_note, Toast.LENGTH_SHORT).show();
-                        ((Activity) context).recreate();
+                        ((MainActivity) context).listNotes();
                     } else {
                         Toast.makeText(context, R.string.error_deleting, Toast.LENGTH_SHORT).show();
                     }
@@ -203,7 +218,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
                 } else if (itemTitle.equals(menuOptions[1])) {
                     if (database.insertData(data.noteTexts.get(position))) {
                         Toast.makeText(context, R.string.duplicated_note, Toast.LENGTH_SHORT).show();
-                        ((Activity) context).recreate();
+                        ((MainActivity) context).listNotes();
                     } else {
                         Toast.makeText(context, R.string.error_duplicating, Toast.LENGTH_SHORT).show();
                     }

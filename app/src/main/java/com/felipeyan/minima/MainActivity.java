@@ -1,8 +1,13 @@
 package com.felipeyan.minima;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
@@ -18,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
     Database database;
     DialogMenus dialogMenus;
@@ -27,8 +34,11 @@ public class MainActivity extends AppCompatActivity {
     AppCompatTextView mainTitle, orderText;
     AppCompatImageView orderIcon;
     Adapter adapter;
+    Pages pages;
     RecyclerView recyclerView;
     SearchView searchView;
+
+    public int requestCode, currentPage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                adapter.getFilter().filter(newText);
+                if (newText.length() > 3) adapter.getFilter().filter(newText);
                 return false;
             }
         });
@@ -115,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void listNotes() { // Creates the RecyclerView that displays the notes saved in the database
-        new Data(this);
+        pages = new Pages(this, currentPage);
+        pages.displayPages();
         adapter = new Adapter(this, "notes");
         recyclerView.setAdapter(adapter);
     }
@@ -124,8 +135,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, NoteActivity.class));
     }
 
-    public static void openSettings(Context context) { // Launches the "Settings" screen
-        context.startActivity(new Intent(context, SettingsActivity.class));
+    public void openSettings(Context context) { // Launches the "Settings" screen
+        requestCode = 1;
+        resultLauncher.launch(new Intent(context, SettingsActivity.class));
     }
 
     public static void openAbout(Context context) { // Launches the "About" screen
@@ -133,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean toggleSearchView() { // Hides the other Toolbar Views and displays the SearchView
+        viewStyler.changeViewVisibility(findViewById(R.id.pagesRV), false);
         viewStyler.changeViewVisibility(findViewById(R.id.mainTitle), false); // Toolbar title
         viewStyler.changeViewVisibility(findViewById(R.id.mainTools), false); // Toolbar buttons
         viewStyler.changeViewVisibility(findViewById(R.id.mainSV), true); // Toolbar SearchView
@@ -141,8 +154,8 @@ public class MainActivity extends AppCompatActivity {
         if (searchView.getVisibility() == View.GONE) { // If SearchView is hidden, also hide the keyboard
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+            listNotes();
         }
-
         return true;
     }
 
@@ -168,4 +181,24 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         database.close();
     }
+
+    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(
+        new ActivityResultContracts.StartActivityForResult(),
+        new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                switch (requestCode) {
+                    case 1:
+                        if (result.getResultCode() == RESULT_OK) {
+                            switch (Objects.requireNonNull(result.getData()).getStringExtra("function")) {
+                                case "updateList":
+                                    currentPage = 0;
+                                    listNotes();
+                                    break;
+                            }
+                        }
+                        break;
+                }
+            }
+    });
 }

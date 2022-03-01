@@ -8,15 +8,28 @@ public class Data {
     Database database;
     UserPreferences preferences;
 
+    public int dataCount;
     public ArrayList<String> noteIds, noteTexts, noteMods;
 
     public Data(Context context) {
         this.database = new Database(context);
         this.preferences = new UserPreferences(context);
 
+        getDataCount();
         getNoteIds();
         getNoteTexts();
         getNoteMods();
+    }
+
+    public void setDataRange(int start, int end) {
+        setNoteIds(new ArrayList<>(getNoteIds().subList(start, end)));
+        setNoteTexts(new ArrayList<>(getNoteTexts().subList(start, end)));
+        setNoteMods(new ArrayList<>(getNoteMods().subList(start, end)));
+    }
+
+    public int getDataCount() {
+        dataCount = database.getDataCount();
+        return dataCount;
     }
 
     public ArrayList<String> getNoteIds() {
