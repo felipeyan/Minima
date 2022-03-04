@@ -139,6 +139,7 @@
                 android:orientation="horizontal"
                 android:overScrollMode="never"
                 tools:listitem="@layout/item_page"
+                tools:itemCount="5"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
         </LinearLayout>

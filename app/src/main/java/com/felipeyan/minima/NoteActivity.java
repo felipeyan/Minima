@@ -54,6 +54,7 @@ public class NoteActivity extends AppCompatActivity {
         super.onStart();
         viewStyler.changeAppFont(); // Changes the Activity text font to the stored value
         viewStyler.changeViewFont(noteField); // Changes note field font
+        noteField.requestFocus();
         noteField.setTextSize(TypedValue.COMPLEX_UNIT_SP, preferences.fontSizeToSP());
     }
 

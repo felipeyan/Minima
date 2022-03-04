@@ -11,7 +11,7 @@
     android:focusable="true"
     android:clickable="true"
     app:cardCornerRadius="0dp"
-    app:cardElevation="0dp"
+    app:cardElevation="3dp"
     app:cardBackgroundColor="@android:color/transparent">
 
     <LinearLayout
