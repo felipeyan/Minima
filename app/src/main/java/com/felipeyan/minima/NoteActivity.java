@@ -2,11 +2,14 @@ package com.felipeyan.minima;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
@@ -24,6 +27,7 @@ public class NoteActivity extends AppCompatActivity {
     ViewStyler viewStyler;
 
     Context context;
+    AppCompatTextView charCount;
     AppCompatEditText noteField;
 
     @Override
@@ -38,8 +42,11 @@ public class NoteActivity extends AppCompatActivity {
         viewStyler = new ViewStyler(this);
 
         context = this;
+        charCount = findViewById(R.id.charCount);
         noteField = findViewById(R.id.noteField);
+        noteField.addTextChangedListener(charCount());
         receivedData();
+        noteField.setSelection(noteField.getText().toString().length());
     }
 
     @Override
@@ -128,5 +135,20 @@ public class NoteActivity extends AppCompatActivity {
         String time = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
         noteField.setText(String.format("%s%s", Objects.requireNonNull(noteField.getText()).toString(), time));
         noteField.setSelection(noteField.getText().toString().length());
+    }
+
+    private TextWatcher charCount() {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                charCount.setText(String.valueOf(charSequence.length()));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) { }
+        };
     }
 }

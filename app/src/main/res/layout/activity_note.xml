@@ -65,6 +65,16 @@
                 android:onClick="addTime"
                 tools:ignore="UsingOnClickInXml"/>
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/charCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:gravity="end"
+                android:textSize="18sp"
+                android:textColor="@color/gray"
+                tools:ignore="HardcodedText"/>
+
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

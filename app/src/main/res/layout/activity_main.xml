@@ -77,6 +77,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/mainScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="8dp"
@@ -124,12 +125,27 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:overScrollMode="never"
+                tools:listitem="@layout/item_note"
+                tools:itemCount="4"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pagesRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="21dp"
+                android:layout_marginHorizontal="12dp"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                tools:listitem="@layout/item_page"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/mainFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"

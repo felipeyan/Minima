@@ -179,6 +179,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("function", "updateList");
+        setResult(RESULT_OK, intent);
         finish();
     }
 
