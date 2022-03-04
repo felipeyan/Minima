@@ -26,7 +26,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
     public static final String SETTINGS_RV = "settings";
     public static final String PAGES_RV = "pages";
 
-    Data data;
     Database database;
     DialogMenus dialogMenus;
     Encryption encryption;
@@ -50,10 +49,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
         this.origin = origin;
 
         switch (origin) {
-            case NOTES_RV:
-                this.data = ((MainActivity) context).pages.data;
-                break;
-            case PAGES_RV:
+            case PAGES_RV: case NOTES_RV:
                 this.pages = ((MainActivity) context).pages;
                 break;
         }
@@ -88,11 +84,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
                 AppCompatTextView dateTime = holder.itemView.findViewById(R.id.dateTimePreview);
                 CardView layout = holder.itemView.findViewById(R.id.noteLayout);
 
-                String decryptedNote = encryption.decryptNote(context, data.noteTexts.get(position));
+                String decryptedNote = encryption.decryptNote(context, pages.noteTexts.get(position));
 
                 note.setText(viewStyler.reduceNoteDisplay(decryptedNote));
                 note.setTextSize(TypedValue.COMPLEX_UNIT_SP, preferences.fontSizeToSP());
-                dateTime.setText(viewStyler.dateTimeFormat(data.noteMods.get(position)));
+                dateTime.setText(viewStyler.dateTimeFormat(pages.noteMods.get(position)));
                 layout.setOnClickListener(noteClick(holder, decryptedNote));
                 layout.setOnLongClickListener(noteLongClick(holder));
                 break;
@@ -119,7 +115,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
 
         switch (origin) {
             case NOTES_RV:
-                itemCount = data.noteTexts.size();
+                itemCount = pages.noteTexts.size();
                 break;
             case SETTINGS_RV:
                 itemCount = ((SettingsActivity) context).getSettings().length;
@@ -140,14 +136,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
     Filter dataFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
-            pages.data.setDataRange(0, pages.data.getDataCount());
-
+            pages.getArraysData(0, pages.data.getDataCount());
             ArrayList<String> filteredData = new ArrayList<>();
 
             if (charSequence.toString().isEmpty()) {
-                filteredData.addAll(data.noteTexts);
+                filteredData.addAll(pages.noteTexts);
             } else {
-                for (String note : data.noteTexts) {
+                for (String note : pages.noteTexts) {
                     if (encryption.decryptNote(context, note).toLowerCase().contains(charSequence.toString().toLowerCase())) {
                         filteredData.add(note);
                     }
@@ -161,9 +156,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            data.noteTexts.clear();
-            data.noteTexts.addAll((Collection<? extends String>) filterResults.values);
-            notifyDataSetChanged();
+            if (filterResults.values != null) {
+                pages.noteTexts.clear();
+                pages.noteTexts.addAll((Collection<? extends String>) filterResults.values);
+                notifyDataSetChanged();
+            }
         }
     };
 
@@ -178,9 +175,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, NoteActivity.class);
-                intent.putExtra("selectedID", data.noteIds.get(holder.getAdapterPosition()));
+                intent.putExtra("selectedID", pages.noteIds.get(holder.getAdapterPosition()));
                 intent.putExtra("selectedNote", note);
-                intent.putExtra("selectedLastModification", data.noteMods.get(holder.getAdapterPosition()));
+                intent.putExtra("selectedLastModification", pages.noteMods.get(holder.getAdapterPosition()));
                 context.startActivity(intent);
             }
         };
@@ -208,7 +205,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
                 String[] menuOptions = context.getResources().getStringArray(R.array.note_options);
 
                 if (itemTitle.equals(menuOptions[0])) {
-                    if (database.deleteData(data.noteIds.get(position)) != 0) {
+                    if (database.deleteData(pages.noteIds.get(position)) != 0) {
                         Toast.makeText(context, R.string.deleted_note, Toast.LENGTH_SHORT).show();
                         ((MainActivity) context).listNotes();
                     } else {
@@ -216,7 +213,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
                     }
                     return true;
                 } else if (itemTitle.equals(menuOptions[1])) {
-                    if (database.insertData(data.noteTexts.get(position))) {
+                    if (database.insertData(pages.noteTexts.get(position))) {
                         Toast.makeText(context, R.string.duplicated_note, Toast.LENGTH_SHORT).show();
                         ((MainActivity) context).listNotes();
                     } else {
@@ -224,7 +221,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
                     }
                     return true;
                 } else if (itemTitle.equals(menuOptions[2])) {
-                    export.shareText(data.noteTexts.get(position));
+                    export.shareText(pages.noteTexts.get(position));
                     return true;
                 }
 

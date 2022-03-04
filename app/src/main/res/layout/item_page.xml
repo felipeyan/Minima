@@ -13,7 +13,7 @@
         android:text="1"
         android:textColor="@color/white"
         android:textSize="18sp"
-        android:background="@drawable/pin_num_bg"
+        android:background="@drawable/gray_app_bar"
         tools:ignore="HardcodedText,InnerclassSeparator"/>
 
 </LinearLayout>

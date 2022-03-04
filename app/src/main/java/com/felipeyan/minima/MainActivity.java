@@ -7,8 +7,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 
@@ -23,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     UserPreferences preferences;
     ViewStyler viewStyler;
 
+    FloatingActionButton mainFAB;
+    NestedScrollView mainScroll;
     AppCompatTextView mainTitle, orderText;
     AppCompatImageView orderIcon;
     Adapter adapter;
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         database = new Database(this);
         dialogMenus = new DialogMenus(this);
+        pages = new Pages(this);
         preferences = new UserPreferences(this);
         viewStyler = new ViewStyler(this);
 
@@ -55,12 +60,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        mainFAB = findViewById(R.id.mainFAB);
+        mainScroll = findViewById(R.id.mainScroll);
         searchView = findViewById(R.id.mainSV);
         recyclerView = findViewById(R.id.mainRV);
         mainTitle = findViewById(R.id.mainTitle);
         orderText = findViewById(R.id.orderText);
         orderIcon = findViewById(R.id.orderIcon);
 
+        mainScroll.setOnScrollChangeListener(scrollListener());
         viewStyler.changeAppFont(); // Changes the Activity text font to the stored value
         viewStyler.changeViewFont(mainTitle, orderText); // Changes toolbar title and listing order indication text font
         viewStyler.changeOrderIcon(orderIcon); // Changes the listing order indication icon based on user preference
@@ -100,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        listNotes();
         viewStyler.changeOrderIcon(orderIcon); // Displays the icon corresponding to the option
+        listNotes();
     }
 
     public PopupMenu.OnMenuItemClickListener menuClick() {
@@ -125,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void listNotes() { // Creates the RecyclerView that displays the notes saved in the database
-        pages = new Pages(this, currentPage);
+        pages.startValues(currentPage);
         pages.displayPages();
         adapter = new Adapter(this, "notes");
         recyclerView.setAdapter(adapter);
@@ -140,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         resultLauncher.launch(new Intent(context, SettingsActivity.class));
     }
 
-    public static void openAbout(Context context) { // Launches the "About" screen
+    public void openAbout(Context context) { // Launches the "About" screen
         Toast.makeText(context, R.string.menu_about, Toast.LENGTH_SHORT).show();
     }
 
@@ -167,19 +175,25 @@ public class MainActivity extends AppCompatActivity {
         svClose.setColorFilter(ContextCompat.getColor(this, R.color.gray), android.graphics.PorterDuff.Mode.SRC_IN); // SearchView close button color
     }
 
-    public void showSearchView(View view) { // When the search icon is pressed
-        toggleSearchView(); // Show search layout
-    }
+    public void showSearchView(View view) {
+        toggleSearchView(); }
 
     @Override
-    public void onBackPressed() { // Display the error message
+    public void onBackPressed() {
         Toast.makeText(this, R.string.cant_close_screen, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    protected void onDestroy () {
-        super.onDestroy();
-        database.close();
+    public NestedScrollView.OnScrollChangeListener scrollListener() {
+        return new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (!mainScroll.canScrollVertically(1)) {
+                    mainFAB.setVisibility(View.GONE);
+                } else {
+                    mainFAB.setVisibility(View.VISIBLE);
+                }
+            }
+        };
     }
 
     ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(
@@ -201,4 +215,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
     });
+
+    @Override
+    protected void onDestroy () {
+        super.onDestroy();
+        database.close();
+    }
 }
