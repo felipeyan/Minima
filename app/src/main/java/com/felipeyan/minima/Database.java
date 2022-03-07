@@ -46,11 +46,11 @@ public class Database extends SQLiteOpenHelper {
         return (int) DatabaseUtils.queryNumEntries(db, TABLE_NAME);
     }
 
-    public boolean insertData(String note) {
+    public boolean insertData(String note, String mod) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("note", note); // Stores the text received by the function call
-        contentValues.put("mod_date", formatDate()); // Added by the date and time formatting function
+        contentValues.put("mod_date", mod == null ? formatDate() : mod);
 
         return db.insert(TABLE_NAME, null, contentValues) != -1;
     }

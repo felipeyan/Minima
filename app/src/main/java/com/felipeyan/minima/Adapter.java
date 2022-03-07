@@ -213,7 +213,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
                     }
                     return true;
                 } else if (itemTitle.equals(menuOptions[1])) {
-                    if (database.insertData(pages.noteTexts.get(position))) {
+                    if (database.insertData(pages.noteTexts.get(position), null)) {
                         Toast.makeText(context, R.string.duplicated_note, Toast.LENGTH_SHORT).show();
                         ((MainActivity) context).listNotes();
                     } else {

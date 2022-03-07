@@ -79,7 +79,7 @@ public class NoteActivity extends AppCompatActivity {
                     finish();
                 }
             } else { // If there is no data received, it is a new note
-                if (database.insertData(encryptedNote(noteField.getText().toString()))) { // Stores the encrypted value in the database
+                if (database.insertData(encryptedNote(noteField.getText().toString()), null)) { // Stores the encrypted value in the database
                     Toast.makeText(this, R.string.saved_note, Toast.LENGTH_SHORT).show(); // Display a success message
                     finish();
                 } else { // If unable to store in database

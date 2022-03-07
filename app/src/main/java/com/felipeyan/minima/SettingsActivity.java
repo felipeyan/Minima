@@ -19,11 +19,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.util.ArrayList;
+
+import java.util.Objects;
 
 public class SettingsActivity extends AppCompatActivity {
     Export export;
@@ -34,6 +38,8 @@ public class SettingsActivity extends AppCompatActivity {
     Context context;
     AppCompatTextView settingsTitle;
     RecyclerView settingsRV;
+
+    int reqCode = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +90,26 @@ public class SettingsActivity extends AppCompatActivity {
                                 R.array.date_time_formats, R.string.date_time_formats, R.string.changed_date_time_format, false);
                         break;
                     case 4:
-                        exportNotesOption();
+                        dialogMenus.popupMenu(view, R.menu.export_menu, new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                String itemTitle = item.getTitle().toString();
+                                String[] menuOptions = getResources().getStringArray(R.array.export_options);
+
+                                if (itemTitle.equals(menuOptions[0])) {
+                                    exportNotesOption();
+                                    return true;
+                                } else if (itemTitle.equals(menuOptions[1])) {
+                                    reqCode = 1;
+                                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                                    intent.setType("application/json");
+                                    resultLauncher.launch(intent);
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }
+                        });
                         break;
                     case 5:
                         dialogMenus.alertBuilder(R.string.proceed, new DialogInterface.OnClickListener() {
@@ -105,7 +130,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void exportNotesOption() {
         if (export.checkStoragePermission()) {
-            resultLauncher.launch(export.exportAsTXT());
+            reqCode = 0;
+            resultLauncher.launch(export.exportAsJSON());
         } else {
             ActivityCompat.requestPermissions(SettingsActivity.this, new String[] {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -165,7 +191,8 @@ public class SettingsActivity extends AppCompatActivity {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             switch (requestCode) {
                 case 1:
-                    resultLauncher.launch(export.exportAsTXT());
+                    reqCode = 0;
+                    resultLauncher.launch(export.exportAsJSON());
                     break;
             }
         } else {
@@ -190,19 +217,39 @@ public class SettingsActivity extends AppCompatActivity {
         new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
-                if (result.getResultCode() == RESULT_OK) {
-                    try {
-                        Uri uri = result.getData().getData();
-                        OutputStream outputStream = getContentResolver().openOutputStream(uri);
-                        outputStream.write(export.getNotes().toString().getBytes());
-                        outputStream.close();
+                switch (reqCode) {
+                    case 0:
+                        if (result.getResultCode() == RESULT_OK) {
+                            try {
+                                export.writeInFile(Objects.requireNonNull(result.getData()).getData(), export.formatJSONFile());
+                                Toast.makeText(context, R.string.exported_file, Toast.LENGTH_SHORT).show();
+                            } catch (IOException e) {
+                                Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        } else if (result.getResultCode() != RESULT_CANCELED) {
+                            Toast.makeText(context, R.string.error_exporting_file, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case 1:
+                        if (result.getResultCode() == RESULT_OK) {
+                            Database database = new Database(context);
+                            Encryption encryption = new Encryption();
+                            Uri filePath = Objects.requireNonNull(result.getData()).getData();
+                            ArrayList<String> restoredNotes = export.getJSONArrayData(filePath, "note");
+                            ArrayList<String> restoredMods = export.getJSONArrayData(filePath, "mod_date");
 
-                        Toast.makeText(context, R.string.exported_file, Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
-                        Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                } else if (result.getResultCode() != RESULT_CANCELED) {
-                    Toast.makeText(context, R.string.error_exporting_file, Toast.LENGTH_SHORT).show();
+                            for (int i = 0; i < restoredMods.size(); i++) {
+                                try {
+                                    String encryptedNote = encryption.encrypt(restoredNotes.get(i), preferences.getEncryptedPreference(preferences.APP_PASSWORD, false));
+                                    database.insertData(encryptedNote, restoredMods.get(i));
+                                } catch (Exception e) {
+                                    Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            Toast.makeText(context, R.string.restored_data_from_json, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
                 }
             }
         }

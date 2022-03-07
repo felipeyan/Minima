@@ -33,7 +33,7 @@
         <item>Configurar tamanho da fonte</item>
         <item>Mudar fonte do aplicativo</item>
         <item>Alterar o tipo de formato de data e hora</item>
-        <item>Exportar todas as notas em TXT</item>
+        <item>Exportar ou restaurar dados</item>
         <item>Apagar todo o banco de dados</item>
     </string-array>
     <string-array name="font_size">
@@ -45,6 +45,10 @@
         <item>Excluir</item>
         <item>Duplicar</item>
         <item>Compartilhar</item>
+    </string-array>
+    <string-array name="export_options">
+        <item>@string/export_as_json</item>
+        <item>@string/restore_from_json</item>
     </string-array>
     <string name="storage_permission">A exportação de arquivos necessita da permissão de armazenamento, ative-a nas permissões desse aplicativo</string>
     <string name="error_exporting_file">Um erro ocorreu ao exportar o arquivo</string>
@@ -67,4 +71,7 @@
     <string name="removed_pass">Sua senha foi removida com sucesso</string>
     <string name="choose_font_size">Escolher tamanho da fonte</string>
     <string name="changed_font_size">Tamanho da fonte alterada com sucesso</string>
+    <string name="export_as_json">Exportar todas as notas como JSON</string>
+    <string name="restore_from_json">Restaurar notas de arquivo JSON</string>
+    <string name="restored_data_from_json">Notas restauradas com sucesso</string>
 </resources>
