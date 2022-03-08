@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -78,12 +79,12 @@ public class SettingsActivity extends AppCompatActivity {
                         showPinDialog();
                         break;
                     case 1:
-                        dialogMenus.preferenceSingleChoiceMenu(preferences.FONT_SIZE,
-                            R.array.font_size, R.string.choose_font_size, R.string.changed_font_size, false);
+                        dialogMenus.preferenceSingleChoiceMenu(preferences.FONT_FAMILY,
+                                R.array.fonts, R.string.choose_font, R.string.changed_font, true);
                         break;
                     case 2:
-                        dialogMenus.preferenceSingleChoiceMenu(preferences.FONT_FAMILY,
-                            R.array.fonts, R.string.choose_font, R.string.changed_font, true);
+                        dialogMenus.preferenceSingleChoiceMenu(preferences.FONT_SIZE,
+                            R.array.font_size, R.string.choose_font_size, R.string.changed_font_size, false);
                         break;
                     case 3:
                         dialogMenus.preferenceSingleChoiceMenu(preferences.DATE_TIME_FORMAT,
@@ -97,7 +98,7 @@ public class SettingsActivity extends AppCompatActivity {
                                 String[] menuOptions = getResources().getStringArray(R.array.export_options);
 
                                 if (itemTitle.equals(menuOptions[0])) {
-                                    exportNotesOption();
+                                    exportWarning();
                                     return true;
                                 } else if (itemTitle.equals(menuOptions[1])) {
                                     reqCode = 1;
@@ -126,6 +127,26 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    public AlertDialog exportWarning() {
+        return new AlertDialog.Builder(context)
+            .setTitle(R.string.warning)
+            .setMessage(R.string.export_warning)
+            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    finish();
+                }
+            })
+            .setPositiveButton(R.string.want_to_continue, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    exportNotesOption();
+                    dialogInterface.dismiss();
+                }
+            })
+            .show();
     }
 
     public void exportNotesOption() {
@@ -165,6 +186,11 @@ public class SettingsActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 preferences.removePreference(preferences.APP_PIN);
                                 Toast.makeText(context, R.string.removed_pass, Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
                                 dialog.dismiss();
                             }
                         });

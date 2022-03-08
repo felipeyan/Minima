@@ -18,8 +18,9 @@
             android:id="@+id/pinTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="18dp"
             android:text="@string/insert_pin"
-            android:textSize="21dp"
+            android:textSize="21sp"
             android:textColor="@color/white"
             android:gravity="center_horizontal"/>
 
@@ -29,12 +30,13 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="12dp"
             android:layout_marginVertical="18dp"
-            android:paddingBottom="21dp"
+            android:padding="12dp"
             android:textSize="28dp"
             android:textColor="@color/white"
             android:inputType="numberPassword"
-            android:gravity="center_horizontal"
-            android:backgroundTint="@color/white"
+            android:singleLine="true"
+            android:gravity="center"
+            android:background="@drawable/gray_app_bar"
             android:enabled="false"
             tools:ignore="SpUsage"/>
 

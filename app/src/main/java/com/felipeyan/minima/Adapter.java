@@ -9,10 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
@@ -93,11 +95,21 @@ public class Adapter extends RecyclerView.Adapter<Adapter.Holder> implements Fil
                 layout.setOnLongClickListener(noteLongClick(holder));
                 break;
             case SETTINGS_RV:
+                AppCompatImageView optionIcon = holder.itemView.findViewById(R.id.settingsIV);
                 AppCompatTextView optionText = holder.itemView.findViewById(R.id.settingsTV);
                 CardView optionCard = holder.itemView.findViewById(R.id.settingsCV);
+                LinearLayout optionsLayout = holder.itemView.findViewById(R.id.settingsLL);
+
+                int[] icons = {
+                        R.drawable.ic_lock, R.drawable.ic_font, R.drawable.ic_font_size,
+                        R.drawable.ic_date, R.drawable.ic_restore_export, R.drawable.ic_delete
+                };
 
                 String[] options = ((SettingsActivity) context).getSettings();
 
+                if (position == (options.length - 1)) optionsLayout.setBackground(context.getResources().getDrawable(R.drawable.red_app_bar));
+
+                optionIcon.setImageResource(icons[position]);
                 optionText.setText(options[position]);
                 optionCard.setOnClickListener(((SettingsActivity) context).settingsItemClick(position));
                 break;

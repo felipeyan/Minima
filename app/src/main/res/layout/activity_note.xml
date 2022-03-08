@@ -15,16 +15,16 @@
             android:id="@+id/noteField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
+            android:background="@android:color/transparent"
             android:gravity="start"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:minLines="25"
-            android:lineSpacingExtra="4dp"
             android:hint="@string/start_typing"
-            android:textColorHint="@color/gray"
             android:inputType="textMultiLine"
-            android:background="@android:color/transparent"/>
+            android:lineSpacingExtra="4dp"
+            android:minLines="25"
+            android:padding="12dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray"
+            android:textSize="18sp" />
 
     </ScrollView>
 

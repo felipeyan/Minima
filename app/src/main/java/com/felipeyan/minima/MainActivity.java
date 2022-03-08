@@ -91,8 +91,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void openMenu(View view) { // Displays the menu after clicking the 3-dot icon
-        dialogMenus.popupMenu(view, R.menu.main_menu, menuClick());
+    public void openMenu(View view) {
+        requestCode = 1;
+        resultLauncher.launch(new Intent(this, SettingsActivity.class));
     }
 
     public void changeOrder(View view) { // Action that changes the order of the note list
@@ -112,26 +113,6 @@ public class MainActivity extends AppCompatActivity {
         listNotes();
     }
 
-    public PopupMenu.OnMenuItemClickListener menuClick() {
-        return new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                String menuTitle = item.getTitle().toString();
-                String[] menuOptions = getResources().getStringArray(R.array.main);
-
-                if (menuTitle.equals(menuOptions[0])) {
-                    openSettings(MainActivity.this);
-                    return true;
-                } else if (menuTitle.equals(menuOptions[1])) {
-                    openAbout(MainActivity.this);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-    }
-
     public void listNotes() { // Creates the RecyclerView that displays the notes saved in the database
         pages.startValues(currentPage);
         pages.displayPages();
@@ -141,11 +122,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void addNote(View view) { // Launches the "Note" screen
         startActivity(new Intent(this, NoteActivity.class));
-    }
-
-    public void openSettings(Context context) { // Launches the "Settings" screen
-        requestCode = 1;
-        resultLauncher.launch(new Intent(context, SettingsActivity.class));
     }
 
     public void openAbout(Context context) { // Launches the "About" screen

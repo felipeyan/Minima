@@ -33,9 +33,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/app_name"
-                    android:textSize="18dp"
-                    android:textStyle="bold"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white"
+                    style="@style/TextAppearance.AppCompat.Title"/>
 
                 <LinearLayout
                     android:id="@+id/mainTools"
@@ -46,8 +45,8 @@
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/mainSearchIcon"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:layout_marginEnd="16dp"
                         android:src="@drawable/ic_search"
                         android:tint="@color/white"
@@ -55,9 +54,9 @@
                         tools:ignore="OnClick,UsingOnClickInXml"/>
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@drawable/ic_menu"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_config"
                         android:tint="@color/white"
                         android:onClick="openMenu"
                         tools:ignore="UsingOnClickInXml"/>

@@ -30,11 +30,11 @@
     </string-array>
     <string-array name="settings">
         <item>Configurar senha de PIN</item>
-        <item>Configurar tamanho da fonte</item>
-        <item>Mudar fonte do aplicativo</item>
-        <item>Alterar o tipo de formato de data e hora</item>
+        <item>Fonte do aplicativo</item>
+        <item>Tamanho da fonte</item>
+        <item>Formato de data e hora</item>
         <item>Exportar ou restaurar dados</item>
-        <item>Apagar todo o banco de dados</item>
+        <item>Apagar banco de dados</item>
     </string-array>
     <string-array name="font_size">
         <item>Pequena</item>
@@ -74,4 +74,8 @@
     <string name="export_as_json">Exportar todas as notas como JSON</string>
     <string name="restore_from_json">Restaurar notas de arquivo JSON</string>
     <string name="restored_data_from_json">Notas restauradas com sucesso</string>
+    <string name="warning">ALERTA</string>
+    <string name="want_to_continue">Continuar</string>
+    <string name="export_warning">Exportando as notas para fora do aplicativo elas serão descriptografadas, o que pode comprometer a segurança das informações, por isso NÓS NÃO RECOMENDAMOS que o arquivo JSON permaneça em seu armazenamento local por muito tempo. Recomendamos optar pelo armazenamento em nuvem ou em aplicativos que possuem criptografia de arquivos.</string>
+    <string name="new_note">Nova nota</string>
 </resources>

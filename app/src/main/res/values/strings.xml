@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Minima</string>
-    <string name="app_version" translatable="false">0.12</string>
+    <string name="app_version" translatable="false">0.12.1</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
@@ -49,11 +49,11 @@
     </string-array>
     <string-array name="settings">
         <item>Set PIN password</item>
-        <item>Change font size</item>
-        <item>Change application font</item>
-        <item>Change date and time format type</item>
+        <item>Application font</item>
+        <item>Font size</item>
+        <item>Date and time format</item>
         <item>Export or restore data</item>
-        <item>Delete entire database</item>
+        <item>Delete database</item>
     </string-array>
     <string-array name="fonts">
         <item>Crimson Text</item>
@@ -89,4 +89,8 @@
     <string name="export_as_json">Export all notes as JSON</string>
     <string name="restore_from_json">Restore notes from JSON file</string>
     <string name="restored_data_from_json">Notes successfully restored</string>
+    <string name="warning">WARNING</string>
+    <string name="want_to_continue">Continue</string>
+    <string name="export_warning">Exporting notes outside of the app will decrypt them, which can compromise information security, so WE DO NOT RECOMMEND that the JSON file remain on your local storage for a long time. We recommend opting for cloud storage or in apps that have file encryption.</string>
+    <string name="new_note">New note</string>
 </resources>
